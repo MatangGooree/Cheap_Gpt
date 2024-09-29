@@ -29,7 +29,7 @@ body{
 }
 #Top_bar{
   position: sticky;  
-  background-color: #343a40;
+  background-color: #212121;
   margin: 0;
   top: 0;
   left: 0;
@@ -52,7 +52,7 @@ body{
   padding: 20px;
   width: 250px;
   height: calc(100vh - 60px);
-  background-color: #24282c;
+  background-color: #171717;
   color: white;
   overflow-y: auto;
 }
@@ -62,7 +62,7 @@ body{
   left: 250px;
   width: calc(100vw - 250px);
   height: calc(100vh - 60px);
-  background-color: #343a40;
+  background-color: #212121;
   color: white;
   overflow-y: auto;
 }

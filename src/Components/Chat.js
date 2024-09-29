@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 
+import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg'
+
 function Chat() {
   const [inputVal, setInputVal] = useState('');
   const [isInput, setIsInput] = useState(false);
@@ -33,8 +35,8 @@ function Chat() {
       {' '}
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" onInput={input_change} />
-        <button id="input_button" ref={inputRef} style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
-          ⇧
+        <button  id="input_button" ref={inputRef} style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
+          <img src={InputIcon} />
         </button>
       </div>
     </div>

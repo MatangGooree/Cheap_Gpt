@@ -7,21 +7,21 @@
 }
 
 #Ask_group {
-  background-color: rgb(35, 50, 50);
+  background-color: #2F2F2F;
   border-radius: 35px;
   padding: 10px;
   padding-left: 20px;
   display: flex;
   width: 100%;
-  height: 57px;
+  height: 62px;
 }
 
 #tb_input {
     padding-right: 10px;
   overflow: hidden;
   resize: none;
-height: 37px;
-  background-color: rgb(35, 50, 50);
+height: 42px;
+  background-color: #2F2F2F;
   width: 100%;
   border: none;
   outline: none;
@@ -29,7 +29,7 @@ height: 37px;
   color: white; 
 }
 #input_button {
-  background-color: rgb(78, 71, 71);
+  background-color: #676767;
   border-radius: 50%;
   border: none;
   width: 42px;
