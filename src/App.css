@@ -1,16 +1,10 @@
+body{
+  margin: 0px;
+  padding: 0px;;
+}
+
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
 }
 
 .App-header {
@@ -26,6 +20,51 @@
 
 .App-link {
   color: #61dafb;
+}
+
+#Back{
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+}
+#Top_bar{
+  position: sticky;  
+  background-color: #343a40;
+  margin: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 60px;
+}
+
+
+#Main_panel{  
+  margin: 0px;
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 60px); /* Top_bar의 높이를 뺀 나머지 높이 */
+}
+
+
+/* 창 크기 작아지면 없어지도록 해야함 */
+#List_Panel {
+  position: absolute;
+  padding: 20px;
+  width: 250px;
+  height: calc(100vh - 60px);
+  background-color: #24282c;
+  color: white;
+  overflow-y: auto;
+}
+#Chat_Panel {  
+  position: absolute;
+  padding: 20px;
+  left: 250px;
+  width: calc(100vw - 250px);
+  height: calc(100vh - 60px);
+  background-color: #343a40;
+  color: white;
+  overflow-y: auto;
 }
 
 @keyframes App-logo-spin {

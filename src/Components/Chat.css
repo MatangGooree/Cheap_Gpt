@@ -1,0 +1,40 @@
+#Chat_back {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: end;
+}
+
+#Ask_group {
+  background-color: rgb(35, 50, 50);
+  border-radius: 35px;
+  padding: 10px;
+  padding-left: 20px;
+  display: flex;
+  width: 100%;
+  height: 57px;
+}
+
+#tb_input {
+    padding-right: 10px;
+  overflow: hidden;
+  resize: none;
+height: 37px;
+  background-color: rgb(35, 50, 50);
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 25px;
+  color: white; 
+}
+#input_button {
+  background-color: rgb(78, 71, 71);
+  border-radius: 50%;
+  border: none;
+  width: 42px;
+  height: 42px;
+  padding: 0px;
+  margin-top: auto;
+  color: white;
+}
