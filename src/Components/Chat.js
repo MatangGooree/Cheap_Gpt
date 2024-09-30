@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
+import Top_bar from './Top_Bar';
 
 import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg'
 
-function Chat() {
+function Chat(setIsListOpen) {
   const [inputVal, setInputVal] = useState('');
   const [isInput, setIsInput] = useState(false);
   const inputRef = useRef(null);
@@ -32,7 +33,7 @@ function Chat() {
 
   return (
     <div id="Chat_back">
-      {' '}
+      <Top_bar setIsListOpen={setIsListOpen} />
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" onInput={input_change} />
         <button  id="input_button" ref={inputRef} style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>

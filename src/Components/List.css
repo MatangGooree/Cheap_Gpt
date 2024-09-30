@@ -1,16 +1,82 @@
 
+:root {
+  --main-bg-color: #171717;
+  --main-text-color: white;
+  --active-bg-color: #2a2a2a;
+  --back-width : 300px;
+  --top-height : 100px;
+}
+
+  #list_back{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100vh;    
+    max-height: 100vh;
+    align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
+    justify-content: center; /* 세로 방향 중앙 정렬 (선택 사항) */
+  }
   
+  #list_top{
+    width: 100%;
+    padding: 20px;
+    top: 0px;
+    left: 0px;
+    height: var(--top-height);
+    background-color: #171717;
+  } 
+
+  #list_btn{    
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    background-color: #171717;
+    border: none;
+  }
+  #write_btn{    
+    float: right;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    background-color: #171717;
+    border: none;
+  }
+  
+  #list_items{
+    width: 100%;
+    padding: 20px;
+    z-index: 0;
+    overflow-y: auto;
+    max-height: calc(100vh -  var(--top-height));
+  }
+
+  #list_items::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  #list_items::-webkit-scrollbar-track {
+    background-color: #171717; 
+  }
+
+  #list_items::-webkit-scrollbar-thumb {
+    background-color: #2a2a2a;
+    border-radius: 7px;
+  }
+
+  #list_items::-webkit-scrollbar-thumb:hover {
+    background-color: #555555;
+  }
   
   #conversation_list_active {
     border: none;
     border-radius: 10px;
-    background-color: #2a2a2a; /* 배경색 변경 */
-    color: white; /* 텍스트 색상 변경 */
+    background-color: #2a2a2a; 
+    color: white; 
   }
   
   #conversation_list {    
     border: none;
     border-radius: 10px;
-    background-color: #171717; /* 배경색 변경 */
-    color: white; /* 텍스트 색상 변경 */
+    background-color: #171717; 
+    color: white; 
   }
