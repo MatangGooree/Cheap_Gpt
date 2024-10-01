@@ -2,10 +2,13 @@ import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } f
 import './Chat_room.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addChat } from '../Redux/Conversation';
-import axios from 'axios'; // axios를 ES6 방식으로 임포트
+import axios from 'axios'; 
+
 
 const Chat_room = forwardRef((props, ref) => {
-  const apiKey = 'sk-pUUNmJz9xyCl1vBMXDfF-onnLEi1tC_35GToThsHcYT3BlbkFJSwuYFOjAedSHcqWVwZbHBvKY0VNPQiuLp5MXQz0pwA'; // OpenAI에서 발급받은 API 키
+
+
+  const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   const nowConversation = useSelector((state) => state.Conversation);
