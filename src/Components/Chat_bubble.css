@@ -1,0 +1,40 @@
+.chat_bubble{
+    font-size: 1.5rem;
+    line-height: 1.75;
+    padding: 10px;
+    color: white;
+}
+
+.userbub
+{
+    max-width: 70%;
+    padding: 20px;
+    padding-top: 5px ;
+    padding-bottom: 5px;
+    border-radius: 1.5rem;
+    background-color: #2f2f2f;
+    overflow: hidden; /* 내용이 넘치면 숨김 */
+    word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
+}
+
+.bubble{
+    max-width: 70%;
+    padding: 20px;
+    padding-top: 5px ;
+    padding-bottom: 5px;
+    border-radius: 1.5rem;
+    overflow: hidden; /* 내용이 넘치면 숨김 */
+    word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
+}
+.user {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    
+}
+
+.assistant{
+    display: flex;
+    flex-direction: row;
+
+}

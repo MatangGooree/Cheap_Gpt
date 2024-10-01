@@ -2,21 +2,24 @@ import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } f
 import './Chat_room.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addChat } from '../Redux/Conversation';
-import axios from 'axios'; 
-
+import axios from 'axios';
+import ChatBubble from './Chat_bubble';
 
 const Chat_room = forwardRef((props, ref) => {
-
-
   const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-  const nowConversation = useSelector((state) => state.Conversation);
+  const reduxConversation = useSelector((state) => state.Conversation);
   const dispatch = useDispatch();
+
+  const chatRef = useRef(null);
+  const [nowConversation, setNowConversation] = useState([]);
 
   useImperativeHandle(ref, () => ({
     async getGPTResponse(message) {
-      let msg = [{ role: 'system', content: 'You are a helpful assistant.' }, ...nowConversation.memory, { role: 'user', content: message }];
+      setNowConversation((prev) => [...prev, { role: 'user', content: message }]);
+
+      let msg = [{ role: 'system', content: 'You are a helpful assistant.' }, ...reduxConversation.memory, { role: 'user', content: message }];
       try {
         const response = await axios.post(
           apiUrl,
@@ -34,6 +37,8 @@ const Chat_room = forwardRef((props, ref) => {
           }
         );
 
+        setNowConversation((prev) => [...prev, { role: 'assistant', content: response.data.choices[0].message.content }]);
+
         dispatch(addChat({ role: 'user', content: message }));
         dispatch(addChat({ role: 'assistant', content: response.data.choices[0].message.content }));
       } catch (error) {
@@ -43,13 +48,25 @@ const Chat_room = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    console.log(nowConversation.memory);
-    if (nowConversation.memory.length > 0 && nowConversation.memory[nowConversation.memory.length - 1].role == 'assistant') {
-      console.log(nowConversation.memory[nowConversation.memory.length - 1].content);
+    console.log(reduxConversation.memory);
+    if (reduxConversation.memory.length > 0 && reduxConversation.memory[reduxConversation.memory.length - 1].role == 'assistant') {
+      console.log(reduxConversation.memory[reduxConversation.memory.length - 1].content);
     }
+  }, [reduxConversation]);
+
+  useEffect(() => {
+    chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [nowConversation]);
 
-  return <div id="Chat_room_back"></div>;
+  return (
+    <div id="Chat_room_back" ref={chatRef}>
+      {nowConversation.length > 0 ? (
+        nowConversation.map((chat, index) => <ChatBubble key={index} role={chat.role} message={chat.content} />)
+      ) : (
+        <div></div> // 메시지가 없을 때 보여줄 내용
+      )}
+    </div>
+  );
 });
 
 export default Chat_room;
