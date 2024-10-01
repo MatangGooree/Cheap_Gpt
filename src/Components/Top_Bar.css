@@ -1,11 +1,11 @@
 #Top_bar {
   display: flex;
   flex-direction: row;
-
   align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
   background-color: #212121;
   margin: 0;
-  padding: 20px;
+  padding: 15px;
+  padding-left: 20px;
   width: 100%;
   height: 80px;
 }
@@ -38,6 +38,7 @@
 }
 
 #dropdown_top {
+  height: 50px;
   background-color: #212121;
   border: none;
 }

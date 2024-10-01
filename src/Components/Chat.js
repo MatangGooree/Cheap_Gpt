@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import Top_bar from './Top_Bar';
+import Chat_room from './Chat_room';
 import { useSelector, useDispatch } from 'react-redux';
 
 import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg'
@@ -9,6 +10,7 @@ function Chat() {
   const [inputVal, setInputVal] = useState('');
   const [isInput, setIsInput] = useState(false);
   const groupRef = useRef(null);
+  const chatRoomRef = useRef(null);
 
   const isListOpen = useSelector((state) => state.UI.isOpen);
 
@@ -25,6 +27,12 @@ function Chat() {
     setInputVal(val);
   };
 
+  const EnterInput=()=>{
+    chatRoomRef.current.getGPTResponse(inputVal);
+  }
+
+
+
   useEffect(() => {
     if (inputVal.length > 0) {
       if (!isInput) {
@@ -40,9 +48,10 @@ function Chat() {
   return (
     <div id="Chat_back" class={isListOpen?'':'expanded'}>
       <Top_bar/>
+      <Chat_room ref={chatRoomRef}/>
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" onInput={input_change} />
-        <button  id="input_button" class={isInput?'hoverOn':''} disabled={isInput?false:true}  style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
+        <button  id="input_button" class={isInput?'hoverOn':''} onClick={EnterInput}  disabled={isInput?false:true}  style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>
       </div>

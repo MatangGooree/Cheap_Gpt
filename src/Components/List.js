@@ -3,10 +3,9 @@ import { Container, Col, ListGroup } from 'react-bootstrap';
 import './List.css';
 import List_btn_icon from '../Sources/list_icon.svg';
 import Write_btn_icon from '../Sources/write_icon.svg';
-import {useSelector,  useDispatch } from 'react-redux';
-import { setIsListOpen } from '../Ui'; 
+import { useSelector, useDispatch } from 'react-redux';
+import { setIsListOpen } from '../Redux/Ui';
 function List() {
-
   const dispatch = useDispatch();
   const activeOn = (event) => {
     event.currentTarget.id = 'conversation_list_active';
@@ -16,13 +15,10 @@ function List() {
     event.currentTarget.id = 'conversation_list';
   };
 
-
-
-
   return (
     <div id="list_back">
       <div id="list_top">
-        <button id="list_btn"  onClick={()=>dispatch(setIsListOpen())}>
+        <button id="list_btn" onClick={() => dispatch(setIsListOpen())}>
           <img src={List_btn_icon} alt="" />
         </button>
         <button id="write_btn">
@@ -30,83 +26,83 @@ function List() {
         </button>
       </div>
       <div id="list_items">
-        <ul className="list-group">
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+        <ul class="list-group">
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             An active item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A third item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             And a fifth one
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
-          <li id="conversation_list" className="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
+          <li id="conversation_list" class="list-group-item" onMouseOver={activeOn} onMouseLeave={activeOff}>
             A fourth item
           </li>
         </ul>

@@ -4,7 +4,6 @@ import './App_test.css';
 import List from './Components/List';
 import Chat from './Components/Chat';
 function App() {
-
   const activeOn = (event) => {
     event.currentTarget.id = 'conversation_list_active';
   };
@@ -12,7 +11,6 @@ function App() {
   const activeOff = (event) => {
     event.currentTarget.id = 'conversation_list';
   };
-
 
   return (
     <div id="Back">
