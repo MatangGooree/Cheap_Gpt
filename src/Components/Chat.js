@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import Top_bar from './Top_Bar';
+import { useSelector, useDispatch } from 'react-redux';
 
 import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg'
 
-function Chat(setIsListOpen) {
+function Chat() {
   const [inputVal, setInputVal] = useState('');
   const [isInput, setIsInput] = useState(false);
-  const inputRef = useRef(null);
   const groupRef = useRef(null);
+
+  const isListOpen = useSelector((state) => state.UI.isOpen);
+
+
 
   const input_change = (event) => {
     event.target.style.height = '37px'; // 높이 초기화
@@ -31,12 +35,14 @@ function Chat(setIsListOpen) {
     }
   }, [inputVal]);
 
+  
+
   return (
-    <div id="Chat_back">
-      <Top_bar setIsListOpen={setIsListOpen} />
+    <div id="Chat_back" class={isListOpen?'':'expanded'}>
+      <Top_bar/>
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" onInput={input_change} />
-        <button  id="input_button" ref={inputRef} style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
+        <button  id="input_button" class={isInput?'hoverOn':''} disabled={isInput?false:true}  style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>
       </div>

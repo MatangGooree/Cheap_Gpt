@@ -1,16 +1,43 @@
+#Top_bar {
+  display: flex;
+  flex-direction: row;
 
-#Top_bar{
-    background-color: #212121;
-    margin: 0;
-    padding: 20px;
-    width: 100%;
-    height: 60px;
-  }
+  align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
+  background-color: #212121;
+  margin: 0;
+  padding: 20px;
+  width: 100%;
+  height: 80px;
+}
 
-#list_btn_main{    
-    width: 40px;
-    height: 40px;
-    padding: 5px;
-    background-color: #212121;
-    border: none;
-  }
+#list_btn_chat {
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  padding: 5px;
+  background-color: #212121;
+  border: none;  
+}
+
+#list_btn_chat:hover{
+  background-color: #2f2f2f;
+}
+
+
+#write_btn_chat {
+  
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  padding: 5px;
+  background-color: #212121;
+  border: none;
+}
+#write_btn_chat:hover{
+  background-color: #2f2f2f;
+}
+
+#dropdown_top {
+  background-color: #212121;
+  border: none;
+}

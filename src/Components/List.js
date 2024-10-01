@@ -3,8 +3,11 @@ import { Container, Col, ListGroup } from 'react-bootstrap';
 import './List.css';
 import List_btn_icon from '../Sources/list_icon.svg';
 import Write_btn_icon from '../Sources/write_icon.svg';
+import {useSelector,  useDispatch } from 'react-redux';
+import { setIsListOpen } from '../Ui'; 
 function List() {
 
+  const dispatch = useDispatch();
   const activeOn = (event) => {
     event.currentTarget.id = 'conversation_list_active';
   };
@@ -19,7 +22,7 @@ function List() {
   return (
     <div id="list_back">
       <div id="list_top">
-        <button id="list_btn" >
+        <button id="list_btn"  onClick={()=>dispatch(setIsListOpen())}>
           <img src={List_btn_icon} alt="" />
         </button>
         <button id="write_btn">

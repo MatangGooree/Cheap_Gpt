@@ -4,20 +4,26 @@
   --main-text-color: white;
   --active-bg-color: #2a2a2a;
   --back-width : 300px;
-  --top-height : 100px;
+  --top-height : 80px;
 }
 
-  #list_back{
+  #list_back{    
     display: flex;
     flex-direction: column;
-    position: relative;
+    position: fixed;
+    width: var(--back-width);
     height: 100vh;    
-    max-height: 100vh;
+    max-height: 100vh;    
+    background-color: #171717;
     align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
     justify-content: center; /* 세로 방향 중앙 정렬 (선택 사항) */
   }
   
   #list_top{
+    display: flex;
+    flex-direction: row;
+    align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
+    justify-content: space-between;
     width: 100%;
     padding: 20px;
     top: 0px;
@@ -27,19 +33,26 @@
   } 
 
   #list_btn{    
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     padding: 5px;
     background-color: #171717;
     border: none;
+    border-radius: 10px;
+  }
+  #list_btn:hover{
+    background-color: #2f2f2f;
   }
   #write_btn{    
-    float: right;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     padding: 5px;
     background-color: #171717;
     border: none;
+    border-radius: 10px;
+  }
+   #write_btn:hover{
+    background-color: #2f2f2f;
   }
   
   #list_items{

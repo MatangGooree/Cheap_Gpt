@@ -38,40 +38,14 @@ body{
   margin: 0;
 }
 
-/* 창 크기 작아지면 없어지도록 해야함 */
-#List_Panel {
-  position: absolute;
-  padding: 0px;
-  width: var(--list-width);
-  height: 100vh;
-  background-color: #171717;
-  color: white;
+
+.expanded {
+  width: calc(100vw - var(--list-width)) !important;  /* 확장된 크기 */
+}
+
+.collapsed {
+  width: 100vw !important;
 }
 
 
-#Main_panel{  
-  position: absolute;
-  margin: 0px;
-  width: calc(100vw - var(--list-width));
-  height: 100vh; /* Top_bar의 높이를 뺀 나머지 높이 */
-  left: var(--list-width);
-}
 
-
-#Chat_Panel {  
-  margin: 0px;
-  position: absolute;
-  width: calc(100vw - var(--list-width));
-  height: 100vh ;
-  background-color: #212121;
-  color: white;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

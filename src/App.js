@@ -1,11 +1,9 @@
-import React,{useState,useEffect,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Col, Row } from 'react-bootstrap';
 import './App_test.css';
 import List from './Components/List';
 import Chat from './Components/Chat';
 function App() {
-
-  const [isListOpen,setIsListOpen] = useState(false);
 
   const activeOn = (event) => {
     event.currentTarget.id = 'conversation_list_active';
@@ -15,30 +13,21 @@ function App() {
     event.currentTarget.id = 'conversation_list';
   };
 
-  
-  useEffect(()=>{
-    console.log(isListOpen);
-    if(isListOpen){
-      
-      
-      
-    }else{
-    // var MainPanel  = document.getElementById("Main_panel");
-    // MainPanel.style.left="0px";
-    // MainPanel.style.width = "100vw";
-  }
-},[isListOpen])
 
   return (
     <div id="Back">
-      <Col id="List_Panel">
-        <List setIsListOpen={setIsListOpen} />
-      </Col>
-      <Col id="Main_panel">
-        <Row id="Chat_Panel">
-          <Chat setIsListOpen={setIsListOpen}/>
-        </Row>
-      </Col>
+      <List />
+      <Chat />
+
+      {/* // <div id="Back">
+    //   <Col id="List_Panel" >
+    //     <List />
+    //   </Col>
+    //   <Col id="Main_panel" >
+    //     <Row id="Chat_Panel">
+    //       <Chat/>
+    //     </Row>
+    //   </Col> */}
 
       {/* <Row id="Top_bar">
         <Top_bar />
