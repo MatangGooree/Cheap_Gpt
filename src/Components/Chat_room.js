@@ -1,4 +1,4 @@
-import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useState, useEffect, useRef, useMemo } from 'react';
 import './Chat_room.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addChat } from '../Redux/Conversation';
@@ -9,9 +9,9 @@ const Chat_room = forwardRef((props, ref) => {
   const chatRef = useRef(null);
   const [wholeConversation, setWholeConversation] = useState([]);
 
-  const Answer = async () => {    
+  const Answer = async () => {
     const count = wholeConversation.length > 10 ? wholeConversation.length - 10 : 0;
-    
+
     const context = wholeConversation.slice(count, wholeConversation.length);
     const response = await CallService(context);
     setWholeConversation((prev) => [...prev, response]);
@@ -31,8 +31,10 @@ const Chat_room = forwardRef((props, ref) => {
     } else {
       props.setWaitAnswer(false);
     }
-
-    chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    chatRef.current.scrollTo({
+      top: chatRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [wholeConversation.length]);
 
   return (
@@ -49,4 +51,4 @@ const Chat_room = forwardRef((props, ref) => {
   );
 });
 
-export default Chat_room;
+export default React.memo(Chat_room);

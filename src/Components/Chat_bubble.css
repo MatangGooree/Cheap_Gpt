@@ -1,3 +1,10 @@
+pre{
+  margin: 0px;
+  font-size: 1.5rem;
+  line-height: 1.75;
+}
+
+
 .text {
   white-space: pre-wrap; /* 줄바꿈과 공백을 유지하면서도 자동 줄바꿈 */
   word-wrap: break-word; /* 단어가 너무 길면 다음 줄로 넘김 */
@@ -28,6 +35,11 @@
   right: -100px; /* 왼쪽에서의 위치 조정 */
   width: 100px; /* 이미지의 너비 */
   height: auto; /* 비율 유지 */
+}
+
+.strong{
+  font-weight:bold;
+  font-size: 2rem !important;
 }
 
 .code_top {

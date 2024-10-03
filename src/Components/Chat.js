@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import Top_bar from './Top_Bar';
-import Chat_room from './Chat_room';
+import Chat_room_p from './Chat_room';
 import { useSelector, useDispatch } from 'react-redux';
 
 import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg';
@@ -17,6 +17,8 @@ function Chat() {
 
   const [user_chat, setUser_Chat] = useState({ role: 'user', content: '' });
   const [waitAnswer, setWaitAnswer] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const input_change = (event) => {
     setInputVal(inputRef.current.value);
   };
@@ -35,6 +37,9 @@ function Chat() {
       EnterInput();
     }
   };
+  const transitionEnd = () => {
+    setIsAnimating(false);
+  };
 
   useEffect(() => {
     inputRef.current.style.height = '37px'; // 높이 초기화
@@ -50,13 +55,29 @@ function Chat() {
       setIsInput(false);
     }
   }, [inputVal]);
+
+  useEffect(() => {
+    setIsAnimating(true);
+  }, [isListOpen]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
-    <div id="Chat_back" className={isListOpen ? '' : 'expanded'}>
+    <div id="Chat_back" className={`${isListOpen ? '' : 'expanded'} ${isAnimating ? 'animating' : ''}`} onTransitionEnd={transitionEnd}>
       <Top_bar />
-      <Chat_room ref={chatRoomRef} user_Chat={user_chat} setWaitAnswer={setWaitAnswer} />
+      <Chat_room_p ref={chatRoomRef} user_Chat={user_chat} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyDown={EnterKeyDown} value={inputVal} />
-        <button id="input_button" className={isInput&&!waitAnswer ? 'hoverOn' : ''} onClick={EnterInput} disabled={isInput&&!waitAnswer ? false : true} style={isInput&&!waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
+        <button
+          id="input_button"
+          className={isInput && !waitAnswer ? 'hoverOn' : ''}
+          onClick={EnterInput}
+          disabled={isInput && !waitAnswer ? false : true}
+          style={isInput && !waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>
       </div>

@@ -6,49 +6,53 @@ import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, a
 import gptIcon from '../Sources/list_icon.svg';
 
 function Chat_Bubble(props) {
-
-  
   const parseMessage = (message) => {
-    const parts = message.split(/(```[\s\S]*?```)/g); // 백틱으로 감싸진 부분을 추출
-    return parts.map((part, index) => {
-      if (part.startsWith('```') && part.endsWith('```')) {
-        // 코드 블록인 경우
-        const full = part.replaceAll('```', '').split('\n'); // 백틱 제거
-        const lang = full[0];
-        full.shift(0);
-        const code = full.join('\n');
-        return (
-          <div className="codes_back">
-            <h3 className="code_top">{lang}</h3>
-            <SyntaxHighlighter key={index} language={lang} style={dracula} className="codes">
-              {code.trim()}
-            </SyntaxHighlighter>
-          </div>
-        );
-      } else {
-        console.log('2');
+    if (props.role == 'user') {
+      return <pre className="text">{props.message}</pre>;
+    } else {
+      const parts = message.split(/(```[\s\S]*?```)/g); // 백틱으로 감싸진 부분을 추출
+      return parts.map((part, index) => {
+        if (part.startsWith('```') && part.endsWith('```')) {
+          // 코드 블록인 경우
+          const full = part.replaceAll('```', '').split('\n'); // 백틱 제거
+          const lang = full[0];
+          full.shift(0);
+          const code = full.join('\n');
+          return (
+            <div className="codes_back">
+              <h3 className="code_top">{lang}</h3>
+              <SyntaxHighlighter key={index} language={lang} style={dracula} className="codes">
+                {code.trim()}
+              </SyntaxHighlighter>
+            </div>
+          );
+        } else {
+          const texts = part.match(/\*\*(.*?)\*\*|[^*]+/g);
 
-        const sttt = part.split(/\*\*(.*?)\*\*/g);
+          return (
+            <pre key={index} className="text">
+              {texts.map((str, index) => {
+                if (str.startsWith('**') && str.endsWith('**')) {
+                  return (
+                    <span className="strong" key={index}>
+                      {str.slice(2, -2)}
+                    </span>
+                  ); // **를 제거하고 강조 표시
+                } else {
+                  return <span key={index}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
+                }
+              })}
+            </pre>
+          );
 
-        return (
-          <pre key={index} className="text">
-            {sttt.map((str, index) => {
-              if (str.startsWith('**') && str.endsWith('**')) {
-                return <strong key={index}>{str.slice(2, -2)}</strong>; // **를 제거하고 강조 표시
-              } else {
-                return <span key={index}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
-              }
-            })}
-          </pre>
-        );
-
-        // return (
-        //   <pre key={index} className="text">
-        //     {part}
-        //   </pre>
-        // );
-      }
-    });
+          // return (
+          //   <pre key={index} className="text">
+          //     {part}
+          //   </pre>
+          // );
+        }
+      });
+    }
   };
 
   useEffect(() => {}, [props.message]);
