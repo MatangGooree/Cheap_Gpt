@@ -15,20 +15,24 @@ function Chat() {
 
   const isListOpen = useSelector((state) => state.UI.isOpen);
 
+  const [user_chat, setUser_Chat] = useState({ role: 'user', content: '' });
+  const [waitAnswer, setWaitAnswer] = useState(false);
   const input_change = (event) => {
     setInputVal(inputRef.current.value);
   };
 
   const EnterInput = () => {
-    chatRoomRef.current.getGPTResponse(inputVal);
+    setUser_Chat({ role: 'user', content: inputVal });
+
+    setWaitAnswer(true);
+
     setInputVal('');
   };
 
   const EnterKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && !waitAnswer) {
       event.preventDefault();
-      chatRoomRef.current.getGPTResponse(inputVal);
-      setInputVal('');
+      EnterInput();
     }
   };
 
@@ -46,14 +50,13 @@ function Chat() {
       setIsInput(false);
     }
   }, [inputVal]);
-
   return (
-    <div id="Chat_back" class={isListOpen ? '' : 'expanded'}>
+    <div id="Chat_back" className={isListOpen ? '' : 'expanded'}>
       <Top_bar />
-      <Chat_room ref={chatRoomRef} />
+      <Chat_room ref={chatRoomRef} user_Chat={user_chat} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyDown={EnterKeyDown} value={inputVal} />
-        <button id="input_button" class={isInput ? 'hoverOn' : ''} onClick={EnterInput} disabled={isInput ? false : true} style={isInput ? { backgroundColor: 'white', color: 'black' } : {}}>
+        <button id="input_button" className={isInput&&!waitAnswer ? 'hoverOn' : ''} onClick={EnterInput} disabled={isInput&&!waitAnswer ? false : true} style={isInput&&!waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>
       </div>

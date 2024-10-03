@@ -1,40 +1,81 @@
-.chat_bubble{
-    font-size: 1.5rem;
-    line-height: 1.75;
-    padding: 10px;
-    color: white;
+.text {
+  white-space: pre-wrap; /* 줄바꿈과 공백을 유지하면서도 자동 줄바꿈 */
+  word-wrap: break-word; /* 단어가 너무 길면 다음 줄로 넘김 */
+  overflow: hidden; /* 넘치는 부분 숨김 */
+  margin: 0px;
+  font-size: 1.5rem;
+  line-height: 1.75;
+}
+.chat_bubble {
+  position: relative;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  color: white;
 }
 
-.userbub
-{
-    max-width: 70%;
-    padding: 20px;
-    padding-top: 5px ;
-    padding-bottom: 5px;
-    border-radius: 1.5rem;
-    background-color: #2f2f2f;
-    overflow: hidden; /* 내용이 넘치면 숨김 */
-    word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
+.chat_icon {
+  position: absolute; /* 절대 위치 지정 */
+  top: -25%; /* 상단에서의 위치 조정 */
+  left: -100px; /* 왼쪽에서의 위치 조정 */
+  width: 100px; /* 이미지의 너비 */
+  height: auto; /* 비율 유지 */
+}
+.user_chat_icon {
+  position: absolute; /* 절대 위치 지정 */
+  top: -25%; /* 상단에서의 위치 조정 */
+  right: -100px; /* 왼쪽에서의 위치 조정 */
+  width: 100px; /* 이미지의 너비 */
+  height: auto; /* 비율 유지 */
 }
 
-.bubble{
-    max-width: 70%;
-    padding: 20px;
-    padding-top: 5px ;
-    padding-bottom: 5px;
-    border-radius: 1.5rem;
-    overflow: hidden; /* 내용이 넘치면 숨김 */
-    word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
+.code_top {
+  font-size: 1.1rem;
+  padding: 10px;
+  padding-left: 24px;
+  margin: 0px;
+}
+.codes_back {
+  border-radius: 1rem;
+  background-color: #141414 !important;
+}
+.codes {
+  font-size: 1.5rem !important;
+  line-height: 1.75;
+  border-radius: 0px !important;
+  border-bottom-left-radius: 1rem !important;
+  border-bottom-right-radius: 1rem !important;
+  margin: 0px !important;
+}
+.userbub {
+  padding: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 1.5rem;
+  background-color: #2f2f2f;
+  padding: 20px !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+  overflow: hidden; /* 내용이 넘치면 숨김 */
+  word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
+}
+
+.bubble {
+  max-width: 100%;
+  padding: 0px;
+  border-radius: 1.5rem;
+  overflow: hidden; /* 내용이 넘치면 숨김 */
+  word-wrap: break-word; /* 단어가 너무 길 경우 줄을 넘김 */
 }
 .user {
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    
+  display: flex;
+  right: 0px;
+  flex-direction: row;
+  justify-content: end;
 }
 
-.assistant{
-    display: flex;
-    flex-direction: row;
-
+.assistant {
+  display: flex;
+  flex-direction: row;
 }

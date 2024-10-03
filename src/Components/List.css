@@ -16,7 +16,6 @@
     max-height: 100vh;    
     background-color: #171717;
     align-items: center;    /* 가로 방향 중앙 정렬 (선택 사항) */
-    justify-content: center; /* 세로 방향 중앙 정렬 (선택 사항) */
   }
   
   #list_top{
