@@ -27,7 +27,7 @@ function Chat_Bubble(props) {
             </div>
           );
         } else {
-          const texts = part.match(/\*\*(.*?)\*\*|[^*]+/g);
+          const texts = part.split(/(\*\*[\s\S]*?\*\*|`[^`]+`)/g);
 
           return (
             <pre key={index} className="text">
@@ -38,7 +38,14 @@ function Chat_Bubble(props) {
                       {str.slice(2, -2)}
                     </span>
                   ); // **를 제거하고 강조 표시
-                } else {
+                }else if(str.startsWith('`') && str.endsWith('`')){
+                  return (
+                    <span className="inlineCode" key={index}>
+                      {str.slice(1, -1)}
+                    </span>
+                  );
+                } 
+                else {
                   return <span key={index}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
                 }
               })}

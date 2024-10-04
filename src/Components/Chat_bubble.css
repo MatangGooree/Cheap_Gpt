@@ -10,7 +10,7 @@ pre{
   word-wrap: break-word; /* 단어가 너무 길면 다음 줄로 넘김 */
   overflow: hidden; /* 넘치는 부분 숨김 */
   margin: 0px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   line-height: 1.75;
 }
 .chat_bubble {
@@ -42,6 +42,13 @@ pre{
   font-size: 2rem !important;
 }
 
+.inlineCode{
+  
+  background-color: #2f2f2f;
+  padding: 5px;
+  border-radius: 0.5rem;
+}
+
 .code_top {
   font-size: 1.1rem;
   padding: 10px;
@@ -53,7 +60,7 @@ pre{
   background-color: #141414 !important;
 }
 .codes {
-  font-size: 1.5rem !important;
+  font-size: 1rem !important;
   line-height: 1.75;
   border-radius: 0px !important;
   border-bottom-left-radius: 1rem !important;
