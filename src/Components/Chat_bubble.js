@@ -3,7 +3,7 @@ import './Chat_bubble.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import gptIcon from '../Sources/list_icon.svg';
+import gptIcon from '../Sources/answer.svg';
 
 function Chat_Bubble(props) {
   const parseMessage = (message) => {
@@ -27,8 +27,7 @@ function Chat_Bubble(props) {
             </div>
           );
         } else {
-          const texts = part.split(/(\*\*[\s\S]*?\*\*|`[^`]+`)/g);
-
+          const texts = part.split(/(\*\*[\s\S]*?\*\*|`[^`]+`|###.*?\n)/g);
           return (
             <pre key={index} className="text">
               {texts.map((str, index) => {
@@ -38,14 +37,19 @@ function Chat_Bubble(props) {
                       {str.slice(2, -2)}
                     </span>
                   ); // **를 제거하고 강조 표시
-                }else if(str.startsWith('`') && str.endsWith('`')){
+                } else if (str.startsWith('`') && str.endsWith('`')) {
                   return (
                     <span className="inlineCode" key={index}>
-                      {str.slice(1, -1)}
+                      {str.slice(1, -1).trim()}
                     </span>
                   );
-                } 
-                else {
+                } else if (str.startsWith('###') && str.endsWith('\n')) {
+                  return (
+                    <h1 className="h1" key={index}>
+                      {str.slice(3).trim()}
+                    </h1>
+                  );
+                } else {
                   return <span key={index}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
                 }
               })}
@@ -65,7 +69,7 @@ function Chat_Bubble(props) {
   useEffect(() => {}, [props.message]);
   return (
     <div className={props.role === 'user' ? 'chat_bubble user' : 'chat_bubble'}>
-      {/* {props.role === 'user' ? '' : <img className="chat_icon" src={gptIcon} alt="" />} */}
+      {props.role === 'user' ? '' : <img className="chat_icon" src={gptIcon} alt="" />}
       <div className={props.role === 'user' ? 'bubble userbub' : 'bubble'}>{parseMessage(props.message)}</div>
       {/* {props.role === 'user' ? <img className="user_chat_icon" src={gptIcon} alt="" /> : ''} */}
     </div>

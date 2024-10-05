@@ -17,7 +17,6 @@ function Chat() {
 
   const [user_chat, setUser_Chat] = useState({ role: 'user', content: '' });
   const [waitAnswer, setWaitAnswer] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const input_change = (event) => {
     setInputVal(inputRef.current.value);
@@ -37,9 +36,6 @@ function Chat() {
       EnterInput();
     }
   };
-  const transitionEnd = () => {
-    setIsAnimating(false);
-  };
 
   useEffect(() => {
     inputRef.current.style.height = '37px'; // 높이 초기화
@@ -55,11 +51,7 @@ function Chat() {
       setIsInput(false);
     }
   }, [inputVal]);
-
-  useEffect(() => {
-    setIsAnimating(true);
-  }, [isListOpen]);
-
+ 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -67,7 +59,7 @@ function Chat() {
   }, []);
 
   return (
-    <div id="Chat_back" className={`${isListOpen ? '' : 'expanded'} ${isAnimating ? 'animating' : ''}`} onTransitionEnd={transitionEnd}>
+    <div id="Chat_back" className={isListOpen ? '' : 'expanded'}>
       <Top_bar />
       <Chat_room_p ref={chatRoomRef} user_Chat={user_chat} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>

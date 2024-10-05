@@ -10,11 +10,7 @@
   min-width: calc(100vw - var(--back-width));
   height: 100%;
   background-color: #212121;
-  z-index: 1;
- 
-}
-
-.animating{
+  z-index: 1;  
   transition: width 0.5s ease; /* 애니메이션 효과 */
 }
 
@@ -28,7 +24,7 @@
   padding: 10px;
   padding-left: 30px;
   display: flex;
-  width: 80%;
+  width: 85%;
   height: 62px;
   margin: auto;
   margin-bottom: 20px;
