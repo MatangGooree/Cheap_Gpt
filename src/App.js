@@ -13,9 +13,9 @@ function App() {
 
   return (
     <div id="Back">
+      
       <List />
       <Chat />
-
     </div>
   );
 }
