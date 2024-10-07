@@ -6,14 +6,22 @@ const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // OpenAI에서 발급받�
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
 export async function CallService(messages) {
-  let msg = [{ role: 'system', content: 'You are a helpful assistant.' }, ...messages];
+  let assistant_ref = 'You are a helpful assistant.';
+
+  if (sessionStorage.getItem('custom') == null) {
+    sessionStorage.setItem('custom', 'You are a helpful assistant.');
+  } else {
+    assistant_ref = sessionStorage.getItem('custom');
+  }
+
+  let msg = [{ role: 'system', content: assistant_ref }, ...messages];
   try {
     const response = await axios.post(
       apiUrl,
       {
-        model: 'gpt-4o-mini', // 또는 'gpt-3.5-turbo'
+        model: 'gpt-4o-mini',
         messages: msg,
-        max_tokens: 1000, // 응답 길이 제한
+        max_tokens: 1500, // 응답 길이 제한
         temperature: 0.7, // 창의성 조절 (0 ~ 1 사이 값)
       },
       {
@@ -43,9 +51,9 @@ export function Classifier(props) {
         full.shift(0);
         const code = full.join('\n');
         return (
-          <div className="codes_back">
+          <div className="codes_back" key={`${index}-code`}>
             <h3 className="code_top">{lang}</h3>
-            <SyntaxHighlighter key={index} language={lang} style={dracula} className="codes">
+            <SyntaxHighlighter language={lang} style={dracula} className="codes">
               {code.trim()}
             </SyntaxHighlighter>
           </div>
@@ -53,28 +61,28 @@ export function Classifier(props) {
       } else {
         const texts = part.split(/(\*\*[\s\S]*?\*\*|`[^`]+`|###.*?\n)/g);
         return (
-          <pre key={index} className="text">
+          <pre key={`${index}-text`} className="text">
             {texts.map((str, index) => {
               if (str.startsWith('**') && str.endsWith('**')) {
                 return (
-                  <span className="strong" key={index}>
+                  <span className="strong" key={`${index}-strong`}>
                     {str.slice(2, -2)}
                   </span>
                 ); // **를 제거하고 강조 표시
               } else if (str.startsWith('`') && str.endsWith('`')) {
                 return (
-                  <span className="inlineCode" key={index}>
+                  <span className="inlineCode" key={`${index}-inline`}>
                     {str.slice(1, -1).trim()}
                   </span>
                 );
               } else if (str.startsWith('###') && str.endsWith('\n')) {
                 return (
-                  <h1 className="h1" key={index}>
+                  <h1 className="h1" key={`${index}-h1`}>
                     {str.slice(3).trim()}
                   </h1>
                 );
               } else {
-                return <span key={index}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
+                return <span key={`${index}-span`}>{str}</span>; // 일반 문자열을 span으로 감싸서 출력
               }
             })}
           </pre>

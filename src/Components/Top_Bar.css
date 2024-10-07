@@ -48,30 +48,12 @@
   margin-left: auto;
 }
 
-#custom_modal_header{
-  display: flex;
-  flex-direction: row;
+.modal_header{
+  border-bottom:none;
 }
 
-#custom_modal{
+.modal_back{
   background-color:#212121 ;
   border-radius: 5px;
   color: white;
-}
-
-#modal_close{
-  margin-left: auto;
-  background-color:#212121 ;
-  border: none;
-
-}
-
-.modal_input_div{
-  display: flex;
-  margin-bottom: 20px;
-  
-}
-.modal_label{
-  margin-right: 10px;
-  
 }
