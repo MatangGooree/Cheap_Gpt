@@ -2,42 +2,6 @@ import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const apiKey = process.env.REACT_APP_OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
-const apiUrl = 'https://api.openai.com/v1/chat/completions';
-
-export async function CallService(messages) {
-  let assistant_ref = 'You are a helpful assistant.';
-
-  if (sessionStorage.getItem('custom') == null) {
-    sessionStorage.setItem('custom', 'You are a helpful assistant.');
-  } else {
-    assistant_ref = sessionStorage.getItem('custom');
-  }
-
-  let msg = [{ role: 'system', content: assistant_ref }, ...messages];
-  try {
-    const response = await axios.post(
-      apiUrl,
-      {
-        model: 'gpt-4o-mini',
-        messages: msg,
-        max_tokens: 1500, // 응답 길이 제한
-        temperature: 0.7, // 창의성 조절 (0 ~ 1 사이 값)
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return { role: 'assistant', content: response.data.choices[0].message.content };
-  } catch (error) {
-    console.error('Error:', error.response ? error.response.data : error.message);
-    return { role: 'assistant', content: error.response ? error.response.data : error.message };
-  }
-}
-
 export function Classifier(props) {
   if (props.role == 'user') {
     return <pre className="text">{props.message}</pre>;

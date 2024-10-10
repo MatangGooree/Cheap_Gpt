@@ -10,7 +10,7 @@ const Chat_room = forwardRef((props, ref) => {
 
   const isListOpen = useSelector((state) => state.UI.isOpen);
 
-  const Answer = async () => {
+  const Answer = () => {
     let max = 10;
 
     if (sessionStorage.getItem('max') == null) {
@@ -22,8 +22,27 @@ const Chat_room = forwardRef((props, ref) => {
     const count = wholeConversation.length > max ? wholeConversation.length - max : 0;
 
     const context = wholeConversation.slice(count, wholeConversation.length);
-    const response = await CallService(context);
-    setWholeConversation((prev) => [...prev, response]);
+
+    let assistant_ref = 'You are a helpful assistant.';
+
+    if (sessionStorage.getItem('custom') == null) {
+      sessionStorage.setItem('custom', 'You are a helpful assistant.');
+    } else {
+      assistant_ref = sessionStorage.getItem('custom');
+    }
+
+    fetch('/callGptAPI',{
+      method:'POST',
+      headers:{
+        'Content-Type': 'application/json',
+      },
+      body : JSON.stringify({custom : assistant_ref,conversation : context})
+    })
+    .then((response) => response.json())
+    .then((data) =>   setWholeConversation((prev) => [...prev, data]));
+
+    // const response = await CallService(context);
+    // setWholeConversation((prev) => [...prev, response]);
   };
 
   useEffect(() => {
