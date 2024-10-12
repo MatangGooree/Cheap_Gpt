@@ -1,4 +1,3 @@
-
 #Top_bar {
   display: flex;
   flex-direction: row;
@@ -54,7 +53,26 @@
   border: none;
 }
 #settings_dropdown {
+  height: 70px;
+  width: 70px;
   margin-left: auto;
+}
+#dropdown_top_setting {
+  border-radius: 50%;
+  font-size: larger;
+  font-weight: bold;
+  color: rgb(193, 193, 193);
+  height: 70px;
+  width: 70px;
+  padding: 0px;
+  background-color: #212121;
+  border: none;
+}
+
+#profile_img {
+  border-radius: 50%;
+  width: 50px;
+  height: auto;
 }
 
 .modal_header {
