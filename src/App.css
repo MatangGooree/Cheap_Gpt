@@ -1,6 +1,13 @@
 body{
   margin: 0px;
-  padding: 0px;;
+  padding: 0px;
+  box-sizing: border-box;
+}
+:root {
+  --main-bg-color: #171717;
+  --main-text-color: white;
+  --active-bg-color: #2a2a2a;
+  --list-width : 300px;
 }
 
 .App {
@@ -23,47 +30,22 @@ body{
 }
 
 #Back{
+  display: flex;
+  position: relative ;
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   margin: 0;
 }
-#Top_bar{
-  position: sticky;  
-  background-color: #212121;
-  margin: 0;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 60px;
+
+
+.expanded {
+  width: calc(100vw - var(--list-width)) !important;  /* 확장된 크기 */
+}
+
+.collapsed {
+  width: 100vw !important;
 }
 
 
-#Main_panel{  
-  margin: 0px;
-  position: relative;
-  width: 100vw;
-  height: calc(100vh - 60px); /* Top_bar의 높이를 뺀 나머지 높이 */
-}
-
-
-/* 창 크기 작아지면 없어지도록 해야함 */
-#List_Panel {
-  position: absolute;
-  padding: 20px;
-  width: 250px;
-  height: calc(100vh - 60px);
-  background-color: #171717;
-  color: white;
-  overflow-y: auto;
-}
-#Chat_Panel {  
-  position: absolute;
-  padding: 20px;
-  left: 250px;
-  width: calc(100vw - 250px);
-  height: calc(100vh - 60px);
-  background-color: #212121;
-  color: white;
-  overflow-y: auto;
-}
 

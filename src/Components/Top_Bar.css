@@ -1,3 +1,4 @@
+
 #Top_bar {
   display: flex;
   flex-direction: row;
@@ -33,27 +34,56 @@
   padding: 5px;
   background-color: #212121;
   border: none;
+  margin-left: 10px;
 }
 #write_btn_chat:hover {
   background-color: #2f2f2f;
 }
 
+#model_dropdown :hover,
+#settings_dropdown :hover {
+  background-color: #2f2f2f;
+}
+
 #dropdown_top {
+  font-size: larger;
+  font-weight: bold;
+  color: rgb(193, 193, 193);
   height: 50px;
   background-color: #212121;
   border: none;
 }
-
 #settings_dropdown {
   margin-left: auto;
 }
 
-.modal_header{
-  border-bottom:none;
+.modal_header {
+  border-bottom: none;
 }
 
-.modal_back{
-  background-color:#212121 ;
+.modal_back {
+  background-color: #212121;
   border-radius: 5px;
   color: white;
+}
+
+#model_dropdown {
+  margin-left: 10px;
+}
+
+.dropdown_menu {
+  background-color: #2f2f2f !important;
+}
+
+.dropdown_item {
+  user-select: none; /* 텍스트 선택 방지 */
+  -webkit-user-drag: none; /* 요소 드래그 방지 */
+  color: rgb(193, 193, 193);
+  padding: 10px;
+  padding-left: 15px;
+  padding-right: 10px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: bold;
 }

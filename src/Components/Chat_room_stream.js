@@ -36,9 +36,26 @@ const Chat_room = forwardRef((props, ref) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
-    })
-      .then((response) => response.json())
-      .then((data) => setWholeConversation((prev) => [...prev, data]));
+    }).then((response) => {
+      setWholeConversation((prev) => [...prev, { role: 'assistant', content: '' }]);
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      reader.read().then(function processText({ done, value }) {
+        if (done) {
+          console.log('Stream complete');
+          return;
+        }
+
+        // 스트리밍된 데이터를 디코딩해서 실시간으로 처리
+        const chunk = decoder.decode(value, { stream: true });
+        console.log(chunk);
+
+        // 다시 읽기
+        reader.read().then(processText);
+      });
+    });
   };
 
   useEffect(() => {
@@ -53,7 +70,7 @@ const Chat_room = forwardRef((props, ref) => {
       Answer();
       props.setWaitAnswer(true);
     } else {
-      props.setWaitAnswer(false);
+      // props.setWaitAnswer(false);
     }
     chatRef.current.scrollTo({
       top: chatRef.current.scrollHeight,

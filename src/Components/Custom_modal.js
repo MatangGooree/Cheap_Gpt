@@ -1,6 +1,7 @@
 import { Modal, Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
+import X_icon from '../Sources/X.svg';
 
 //#region 스타일 컴포넌트
 const Styled_button = styled.button`
@@ -18,6 +19,7 @@ const Styled_button = styled.button`
   }
 `;
 const Styled_button_close = styled(Styled_button)`
+  padding: 0px;
   margin-left: auto;
   border-radius: 30%;
   width: 40px;
@@ -67,7 +69,10 @@ function Custom_modal(props) {
           }}
         >
           <Modal.Title>맞춤 설정</Modal.Title>
-          <Styled_button_close onClick={props.handleClose}>X</Styled_button_close>
+          <Styled_button_close onClick={props.handleClose}>
+            {' '}
+            <img src={X_icon} />{' '}
+          </Styled_button_close>
         </Modal.Header>
         <Modal.Body style={{ padding: '35px', paddingBottom: '20px' }}>
           <Styled_div>
