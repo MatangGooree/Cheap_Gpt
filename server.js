@@ -57,11 +57,11 @@ app.listen(PORT, () => {
 });
 
 // 빌드된 React 정적 파일 제공
-app.use(express.static(path.join(__dirname, '../build')));
+app.use(express.static(path.join(__dirname, '/build')));
 
 // 모든 요청에 대해 React의 index.html 반환
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  res.sendFile(path.join(__dirname, '/build', 'index.html'));
 });
 
 app.post('/callGptAPI', async (req, res) => {
@@ -97,6 +97,8 @@ app.post('/auth/google', async (req, res) => {
   if (!code) {
     return res.status(400).send('Authorization code is missing');
   }
+
+  console.log(process.env.CLIENT_SECRET);
   try {
     // 구글 토큰 엔드포인트에 POST 요청하여 토큰 교환
     const response = await axios.post('https://oauth2.googleapis.com/token', {
@@ -109,11 +111,9 @@ app.post('/auth/google', async (req, res) => {
 
     const { access_token, refresh_token } = response.data;
 
-
     const userInfo = await getUserInfo({ accessToken: access_token, refreshToken: refresh_token });
 
-
-    const token = jwt.sign({ user: userInfo }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ user: userInfo }, process.env.REACT_APP_JWT_SECRET_KEY, { expiresIn: '1h' });
 
     res.json({ token });
   } catch (error) {

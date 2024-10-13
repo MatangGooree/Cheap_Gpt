@@ -32,7 +32,8 @@ function Top_Bar() {
   const handleShow = () => setShow(true);
 
   const handleLogin = () => {
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=254976605878-1bhh5msadip435j094psc9vg9jmp8a7u.apps.googleusercontent.com&redirect_uri=http://localhost:5000/logIn_Load&response_type=code&scope=profile email`;
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=254976605878-1bhh5msadip435j094psc9vg9jmp8a7u.apps.googleusercontent.com&redirect_uri=${process.env.REACT_APP_SERVER_IP}/logIn_Load&response_type=code&scope=profile email`;
+    console.log(`https://accounts.google.com/o/oauth2/v2/auth?client_id=254976605878-1bhh5msadip435j094psc9vg9jmp8a7u.apps.googleusercontent.com&redirect_uri=${process.env.SERVER_IP}/logIn_Load&response_type=code&scope=profile email`)
   };
   const handleLogout = () => {
     sessionStorage.removeItem('jwt');

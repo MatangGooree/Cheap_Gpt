@@ -5,7 +5,7 @@ const Login_Load = () => {
   const authenticateUser = async (aCode) => {
     try {
       // 인증 코드를 서버로 전송
-      const response = await axios.post('http://localhost:5000/auth/google', { code: aCode });
+      const response = await axios.post(`${process.env.REACT_APP_SERVER_IP  }/auth/google`, { code: aCode });
 
       const { token } = response.data; // JWT 받아오기
 
