@@ -95,6 +95,7 @@ app.post('/callGptAPI', async (req, res) => {
         },
       }
     );
+
     res.json({ role: 'assistant', content: response.data.choices[0].message.content });
   } catch (error) {
     console.error('Error:', error.response ? error.response.data : error.message);
@@ -118,7 +119,7 @@ app.post('/auth/google', async (req, res) => {
       code: code,
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
-      redirect_uri: process.env.REDIRECT_URI,
+      redirect_uri: process.env.REACT_APP_REDIRECT_URI,
       grant_type: 'authorization_code',
     });
 
