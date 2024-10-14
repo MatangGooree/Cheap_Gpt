@@ -9,6 +9,15 @@ require('dotenv').config();
 const apiKey = process.env.OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
+const fs = require('fs');
+const https = require('https');
+
+const privateKey = fs.readFileSync('./Keys/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('./Keys/cert.pem', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
+
 const model_trans = {
   'GPT-4o mini': 'gpt-4o-mini',
   'GPT-4o': 'gpt-4o',
@@ -52,8 +61,12 @@ const authenticate = (req, res, next) => {
 };
 
 // 서버 시작
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+httpsServer.listen(PORT, () => {
+  console.log(`HTTPS 서버가  ${PORT} 포트에서 실행 중입니다.`);
 });
 
 // 빌드된 React 정적 파일 제공
