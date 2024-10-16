@@ -7,6 +7,8 @@ const Chat_room = forwardRef((props, ref) => {
   const chatRef = useRef(null);
   const [wholeConversation, setWholeConversation] = useState(JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation')));
 
+  const [stream,setStream] = useState('');
+
   const isListOpen = useSelector((state) => state.UI.isOpen);
 
   const Answer = () => {
@@ -37,8 +39,8 @@ const Chat_room = forwardRef((props, ref) => {
       },
       body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
     }).then((response) => {
-      setWholeConversation((prev) => [...prev, { role: 'assistant', content: '' }]);
 
+      setWholeConversation((prev) => [...prev, { role: 'assistant', content:'' }]);
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
 
@@ -48,9 +50,13 @@ const Chat_room = forwardRef((props, ref) => {
           return;
         }
 
+        
         // 스트리밍된 데이터를 디코딩해서 실시간으로 처리
         const chunk = decoder.decode(value, { stream: true });
         console.log(chunk);
+
+        setStream(chunk);
+
 
         // 다시 읽기
         reader.read().then(processText);
@@ -60,9 +66,9 @@ const Chat_room = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (props.user_Chat.content != '') {
-      setWholeConversation((prev) => [...prev, { role: props.user_Chat.role, content: props.user_Chat.content }]);
-    }
-  }, [props.user_Chat]);
+      setWholeConversation((prev) => [...prev, { role: 'user', content: props.user_Chat.content }]);
+    }  
+   }, [props.user_Chat]);
 
   useEffect(() => {
     //마지막으로 추가된게 유저 질문이어야 시행한다.
@@ -83,11 +89,13 @@ const Chat_room = forwardRef((props, ref) => {
   return (
     <div className={isListOpen ? 'Chat_room_back list_opened' : 'Chat_room_back'} ref={chatRef}>
       {wholeConversation.length > 0 ? (
-        wholeConversation.map((chat, index) => <ChatBubble key={`${index}-bubble`} role={chat.role} message={chat.content} index={index} />)
+        wholeConversation.map((chat, index) => <ChatBubble_stream key={`${index}-bubble`} role={chat.role} message={chat.content} stream ={stream} index={index} />)
       ) : (
         <div></div> // 메시지가 없을 때 보여줄 내용
       )}
     </div>
+
+
   );
 });
 

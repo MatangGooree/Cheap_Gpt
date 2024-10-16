@@ -29,7 +29,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "node server.js",
+    "test": "node server_stream.js",
     "eject": "react-scripts eject",
     "dev": "nodemon server.js",
     "serve": "node server.js"
