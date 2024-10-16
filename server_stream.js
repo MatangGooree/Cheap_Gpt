@@ -1,4 +1,3 @@
-
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -78,15 +77,13 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/build', 'index.html'));
 });
 
-
 app.post('/callGptAPI', async (req, res) => {
   const model_trans = {
-  'GPT-4o mini': 'gpt-4o-mini',
-  'GPT-4o': 'gpt-4o',
-  'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
-};
+    'GPT-4o mini': 'gpt-4o-mini',
+    'GPT-4o': 'gpt-4o',
+    'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+  };
   let msg = [{ role: 'system', content: req.body.custom }, ...req.body.conversation];
-  console.log( model_trans[req.body.model]);
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -96,7 +93,7 @@ app.post('/callGptAPI', async (req, res) => {
       method: 'post',
       url: apiUrl,
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       data: {
@@ -113,8 +110,12 @@ app.post('/callGptAPI', async (req, res) => {
       payloads.forEach((payload) => {
         if (payload.includes('[DONE]')) return; // 스트리밍 완료
         if (payload.length > 0) {
-          const data = JSON.parse(payload.replace('data: ', ''));
-          console.log(data); // 콘솔에 출력
+          // const data = JSON.parse(payload.replace('data: ', ''));
+          const sanitizedPayload = payload.replace('data: ', '').replace(/`/g, '$');
+
+      // JSON 파싱
+      const data = JSON.parse(sanitizedPayload);
+
           if (data.choices && data.choices[0].delta && data.choices[0].delta.content) {
             res.write(data.choices[0].delta.content); // 클라이언트로 전송
           }
@@ -126,13 +127,11 @@ app.post('/callGptAPI', async (req, res) => {
     response.data.on('end', () => {
       res.end(); // 스트리밍 응답 종료
     });
-
   } catch (error) {
     console.error('Error:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Error calling GPT API' });
   }
 });
-
 
 app.post('/auth/google', async (req, res) => {
   const code = req.body.code;

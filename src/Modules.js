@@ -6,11 +6,14 @@ export function Classifier(props) {
   if (props.role == 'user') {
     return <pre className="text">{props.message}</pre>;
   } else {
-    const parts = props.message.split(/(```[\s\S]*?```)/g); // 백틱으로 감싸진 부분을 추출
+
+    
+
+    const parts = props.message.split(/(\$\$\$[\s\S]*?\$\$\$)/g); // 백틱으로 감싸진 부분을 추출
     return parts.map((part, index) => {
-      if (part.startsWith('```') && part.endsWith('```')) {
+      if (part.startsWith('$$$') && part.endsWith('$$$')) {
         // 코드 블록인 경우
-        const full = part.replaceAll('```', '').split('\n'); // 백틱 제거
+        const full = part.replaceAll('$$$', '').split('\n'); // 백틱 제거
         const lang = full[0];
         full.shift(0);
         const code = full.join('\n');
@@ -54,4 +57,63 @@ export function Classifier(props) {
       }
     });
   }
+}
+
+export function GetAnswer(streamChunk) {
+  const wholeConversation = JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation'));
+
+  let max = 10;
+
+  if (sessionStorage.getItem('max') == null) {
+    sessionStorage.setItem('max', 10);
+  } else {
+    max = sessionStorage.getItem('max');
+  }
+
+  const count = wholeConversation.length > max ? wholeConversation.length - max : 0;
+
+  const context = wholeConversation.slice(count, wholeConversation.length);
+
+  let assistant_ref = 'You are a helpful assistant.';
+
+  if (sessionStorage.getItem('custom') == null) {
+    sessionStorage.setItem('custom', 'You are a helpful assistant.');
+  } else {
+    assistant_ref = sessionStorage.getItem('custom');
+  }
+
+  fetch('/callGptAPI', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
+  }).then((response) => {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    reader.read().then(function processText({ done, value }) {
+      
+      if (done) {
+        console.log('Stream complete');
+
+        if (streamChunk) {
+          streamChunk('', done);
+        }
+        return;
+      }
+
+      // 스트리밍된 데이터를 디코딩해서 실시간으로 처리
+      const chunk = decoder.decode(value, { stream: true });
+
+      
+      if (streamChunk) {
+        console.log(chunk);
+        streamChunk(chunk, done);
+      }
+
+      // 다시 읽기
+      reader.read().then(processText);
+    });
+  });
 }

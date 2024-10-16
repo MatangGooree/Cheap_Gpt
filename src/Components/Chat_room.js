@@ -5,41 +5,9 @@ import ChatBubble from './Chat_bubble';
 
 const Chat_room = forwardRef((props, ref) => {
   const chatRef = useRef(null);
-  const [wholeConversation, setWholeConversation] = useState(JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation')));
-
   const isListOpen = useSelector((state) => state.UI.isOpen);
 
-  const Answer = () => {
-    let max = 10;
-
-    if (sessionStorage.getItem('max') == null) {
-      sessionStorage.setItem('max', 10);
-    } else {
-      max = sessionStorage.getItem('max');
-    }
-
-    const count = wholeConversation.length > max ? wholeConversation.length - max : 0;
-
-    const context = wholeConversation.slice(count, wholeConversation.length);
-
-    let assistant_ref = 'You are a helpful assistant.';
-
-    if (sessionStorage.getItem('custom') == null) {
-      sessionStorage.setItem('custom', 'You are a helpful assistant.');
-    } else {
-      assistant_ref = sessionStorage.getItem('custom');
-    }
-
-    fetch('/callGptAPI', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
-    })
-      .then((response) => response.json())
-      .then((data) => setWholeConversation((prev) => [...prev, data]));
-  };
+  const [wholeConversation, setWholeConversation] = useState(JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation')));
 
   useEffect(() => {
     if (props.user_Chat.content != '') {
@@ -49,24 +17,32 @@ const Chat_room = forwardRef((props, ref) => {
 
   useEffect(() => {
     //마지막으로 추가된게 유저 질문이어야 시행한다.
-    if (wholeConversation.length > 0 && wholeConversation[wholeConversation.length - 1].role == 'user') {
-      Answer();
+
+    if (wholeConversation.length == 0) {
+      return;
+    }
+
+    if (wholeConversation[wholeConversation.length - 1].role == 'user') {
+      sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
+
+      setWholeConversation((prev) => [...prev, { role: 'assistant', content: '' }]);
+
       props.setWaitAnswer(true);
-    } else {
-      props.setWaitAnswer(false);
+    } else if (wholeConversation[wholeConversation.length - 1].role == 'assistant' && wholeConversation[wholeConversation.length - 1].content != '') {
+      console.log('여기를 아예 안들어오나?');
+
+      sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
     }
     chatRef.current.scrollTo({
       top: chatRef.current.scrollHeight,
       behavior: 'smooth',
     });
-
-    sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
-  }, [wholeConversation.length]);
+  }, [wholeConversation]);
 
   return (
     <div className={isListOpen ? 'Chat_room_back list_opened' : 'Chat_room_back'} ref={chatRef}>
       {wholeConversation.length > 0 ? (
-        wholeConversation.map((chat, index) => <ChatBubble key={`${index}-bubble`} role={chat.role} message={chat.content} index={index} />)
+        wholeConversation.map((chat, index) => <ChatBubble key={`${index}-bubble`} role={chat.role} message={chat.content} setWaitAnswer={props.setWaitAnswer} setWholeConversation={setWholeConversation} index={index} />)
       ) : (
         <div></div> // 메시지가 없을 때 보여줄 내용
       )}

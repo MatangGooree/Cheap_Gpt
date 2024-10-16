@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Chat.css';
 import Top_bar from './Top_Bar';
 import Chat_room from './Chat_room';
-import Chat_room_stream from './Chat_room_stream';
 import { useSelector, useDispatch } from 'react-redux';
 
 import InputIcon from '../Sources/arrow-thin-up-svgrepo-com.svg';
@@ -62,8 +61,7 @@ function Chat() {
   return (
     <div id="Chat_back" className={isListOpen ? '' : 'expanded'}>
       <Top_bar />
-      {/* <Chat_room ref={chatRoomRef} user_Chat={user_chat} waitAnswer={waitAnswer} setWaitAnswer={setWaitAnswer} /> */}
-      <Chat_room_stream ref={chatRoomRef} user_Chat={user_chat} waitAnswer={waitAnswer} setWaitAnswer={setWaitAnswer} />
+      <Chat_room ref={chatRoomRef} user_Chat={user_chat} waitAnswer={waitAnswer} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyDown={EnterKeyDown} value={inputVal} />
         <button
