@@ -10,7 +10,7 @@
   min-width: calc(100vw - var(--back-width));
   height: 100%;
   background-color: #212121;
-  z-index: 1;  
+  z-index: 1;
   transition: width 0.5s ease; /* 애니메이션 효과 */
 }
 

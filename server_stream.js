@@ -103,19 +103,16 @@ app.post('/callGptAPI', async (req, res) => {
       },
       responseType: 'stream', // 스트리밍 응답 설정
     });
-
+    let buffer = '';
     // 스트리밍 응답을 클라이언트에게 전달
     response.data.on('data', (chunk) => {
-      const payloads = chunk.toString().split('\n\n');
+      buffer += chunk.toString();
+      const payloads = buffer.toString().split('\n\n');
+      buffer = payloads.pop(); // 마지막 조각을 버퍼에 유지
       payloads.forEach((payload) => {
         if (payload.includes('[DONE]')) return; // 스트리밍 완료
         if (payload.length > 0) {
-          // const data = JSON.parse(payload.replace('data: ', ''));
-          const sanitizedPayload = payload.replace('data: ', '').replace(/`/g, '$');
-
-      // JSON 파싱
-      const data = JSON.parse(sanitizedPayload);
-
+          const data = JSON.parse(payload.replace('data: ', ''));
           if (data.choices && data.choices[0].delta && data.choices[0].delta.content) {
             res.write(data.choices[0].delta.content); // 클라이언트로 전송
           }

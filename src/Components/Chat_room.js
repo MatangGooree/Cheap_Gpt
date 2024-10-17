@@ -29,8 +29,6 @@ const Chat_room = forwardRef((props, ref) => {
 
       props.setWaitAnswer(true);
     } else if (wholeConversation[wholeConversation.length - 1].role == 'assistant' && wholeConversation[wholeConversation.length - 1].content != '') {
-      console.log('여기를 아예 안들어오나?');
-
       sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
     }
     chatRef.current.scrollTo({

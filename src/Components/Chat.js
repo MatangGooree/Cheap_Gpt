@@ -51,7 +51,7 @@ function Chat() {
       setIsInput(false);
     }
   }, [inputVal]);
- 
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -64,12 +64,7 @@ function Chat() {
       <Chat_room ref={chatRoomRef} user_Chat={user_chat} waitAnswer={waitAnswer} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>
         <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyDown={EnterKeyDown} value={inputVal} />
-        <button
-          id="input_button"
-          className={isInput && !waitAnswer ? 'hoverOn' : ''}
-          onClick={EnterInput}
-          disabled={isInput && !waitAnswer ? false : true}
-          style={isInput && !waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
+        <button id="input_button" className={isInput && !waitAnswer ? 'hoverOn' : ''} onClick={EnterInput} disabled={isInput && !waitAnswer ? false : true} style={isInput && !waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>
       </div>

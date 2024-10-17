@@ -1,27 +1,27 @@
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+const langList = ['python', 'java', 'csharp','c', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
 
 export function Classifier(props) {
   if (props.role == 'user') {
     return <pre className="text">{props.message}</pre>;
   } else {
-
-    
-
-    const parts = props.message.split(/(\$\$\$[\s\S]*?\$\$\$)/g); // 백틱으로 감싸진 부분을 추출
+    const parts = props.message.split(/(```[\s\S]*?```)/g); // 백틱으로 감싸진 부분을 추출
     return parts.map((part, index) => {
-      if (part.startsWith('$$$') && part.endsWith('$$$')) {
+      if (part.startsWith('```') && part.endsWith('```')) {
         // 코드 블록인 경우
-        const full = part.replaceAll('$$$', '').split('\n'); // 백틱 제거
-        const lang = full[0];
-        full.shift(0);
+        const full = part.replaceAll('```', '').split('\n'); // 백틱 제거
+        const lang = full[0].trim().toLowerCase();
+        if (langList.includes(lang)) {
+          full.shift();
+        }
         const code = full.join('\n');
         return (
           <div className="codes_back" key={`${index}-code`}>
-            <h3 className="code_top">{lang}</h3>
+            <h1 className="code_top">{lang}</h1>
             <SyntaxHighlighter language={lang} style={dracula} className="codes">
-              {code.trim()}
+              {code}
             </SyntaxHighlighter>
           </div>
         );
@@ -93,10 +93,7 @@ export function GetAnswer(streamChunk) {
     const decoder = new TextDecoder();
 
     reader.read().then(function processText({ done, value }) {
-      
       if (done) {
-        console.log('Stream complete');
-
         if (streamChunk) {
           streamChunk('', done);
         }
@@ -106,9 +103,7 @@ export function GetAnswer(streamChunk) {
       // 스트리밍된 데이터를 디코딩해서 실시간으로 처리
       const chunk = decoder.decode(value, { stream: true });
 
-      
       if (streamChunk) {
-        console.log(chunk);
         streamChunk(chunk, done);
       }
 

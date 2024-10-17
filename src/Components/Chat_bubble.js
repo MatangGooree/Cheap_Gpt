@@ -11,11 +11,8 @@ function Chat_Bubble(props) {
   let finalMsg = '';
 
   const handleChunk = (chunk, done) => {
-    console.log(props);
-
     if (done) {
       props.setWaitAnswer(false);
-      console.log(finalMsg);
       props.setWholeConversation((prev) => [...prev.slice(0, -1), { role: 'assistant', content: finalMsg }]);
     }
 
