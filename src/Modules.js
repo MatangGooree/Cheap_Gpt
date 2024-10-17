@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-const langList = ['python', 'java', 'csharp','c', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
+const langList = ['python', 'java', 'csharp', 'c', 'cpp', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
 
 export function Classifier(props) {
   if (props.role == 'user') {
