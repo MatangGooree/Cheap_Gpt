@@ -71,6 +71,10 @@
   margin: 0px !important;
 }
 
+.code_alone{
+  border-radius: 1rem !important;
+}
+
 .codes::-webkit-scrollbar {
   width: 15px;
 }

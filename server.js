@@ -6,6 +6,8 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+const mariadb = require('mariadb');
+
 const apiKey = process.env.OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
@@ -60,10 +62,15 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// 서버 시작
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
+//마리아DB 설정
+const pool = mariadb.createPool({
+  host: 'matanggooree.dsmynas.com', // 호스트
+  port: 8888,
+  user: 'root', // 사용자 이름
+  password: 'WktTlraos1216', // 비밀번호
+  database: 'Cheap', // 데이터베이스 이름
+  connectionLimit: 20, // 최대 연결 수
+});
 
 httpsServer.listen(PORT, () => {
   console.log(`HTTPS 서버가  ${PORT} 포트에서 실행 중입니다.`);
@@ -77,32 +84,100 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/build', 'index.html'));
 });
 
+// GPT 응답
 app.post('/callGptAPI', async (req, res) => {
+  const model_trans = {
+    'GPT-4o mini': 'gpt-4o-mini',
+    'GPT-4o': 'gpt-4o',
+    'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
+  };
   let msg = [{ role: 'system', content: req.body.custom }, ...req.body.conversation];
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders(); // 헤더를 클라이언트로 즉시 전송
   try {
-    const response = await axios.post(
-      apiUrl,
-      {
+    const response = await axios({
+      method: 'post',
+      url: apiUrl,
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      data: {
         model: model_trans[req.body.model],
         messages: msg,
-        max_tokens: 1500, // 응답 길이 제한
-        temperature: 0.7, // 창의성 조절 (0 ~ 1 사이 값)
+        stream: true, // 스트리밍 활성화
       },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+      responseType: 'stream', // 스트리밍 응답 설정
+    });
+    let buffer = '';
+    // 스트리밍 응답을 클라이언트에게 전달
+    response.data.on('data', (chunk) => {
+      buffer += chunk.toString();
+      const payloads = buffer.toString().split('\n\n');
+      buffer = payloads.pop(); // 마지막 조각을 버퍼에 유지
+      payloads.forEach((payload) => {
+        if (payload.includes('[DONE]')) return; // 스트리밍 완료
+        if (payload.length > 0) {
+          const data = JSON.parse(payload.replace('data: ', ''));
+          if (data.choices && data.choices[0].delta && data.choices[0].delta.content) {
+            res.write(data.choices[0].delta.content); // 클라이언트로 전송
+          }
+        }
+      });
+    });
 
-    res.json({ role: 'assistant', content: response.data.choices[0].message.content });
+    // 스트림 끝났을 때
+    response.data.on('end', () => {
+      res.end(); // 스트리밍 응답 종료
+    });
   } catch (error) {
     console.error('Error:', error.response ? error.response.data : error.message);
-    return { role: 'assistant', content: error.response ? error.response.data : error.message };
+    res.status(500).json({ error: 'Error calling GPT API' });
   }
 });
 
+//데이터 베이스 관련 함수
+async function Insert_DB(table, data) {
+  let conn;
+  try {
+    // 데이터베이스 연결
+    conn = await pool.getConnection();
+
+    console.log(data.Keys);
+
+    //존재 여부 확인
+    const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${Object.keys(data)[0]} = ?`, [Object.values(data)[0]]);
+
+    if (check[0].count > 0) {
+      // 이미 존재
+    } else {
+      //없음
+      const values =
+        '(' +
+        Object.keys(data)
+          .map(() => '?')
+          .join(', ') +
+        ')';
+      const insertQuery = `INSERT INTO ${table} (${Object.keys(data)}) VALUES ${values}`;
+      const userData = Object.values(data);
+      await conn.query(insertQuery, userData, (err, result) => {
+        if (err) {
+          console.log('err' + err);
+        } else {
+          console.log(result);
+        }
+      });
+    }
+  } catch (err) {
+    console.error('오류 발생:', err);
+  } finally {
+    if (conn) conn.release(); // 반드시 연결을 반환
+  }
+}
+
+//로그인 관련
 app.post('/auth/google', async (req, res) => {
   const code = req.body.code;
 
@@ -126,6 +201,10 @@ app.post('/auth/google', async (req, res) => {
     const { access_token, refresh_token } = response.data;
 
     const userInfo = await getUserInfo({ accessToken: access_token, refreshToken: refresh_token });
+
+    console.log(userInfo);
+
+    Insert_DB('users', { id: userInfo.id, username: userInfo.name, email: userInfo.email });
 
     const token = jwt.sign({ user: userInfo }, process.env.REACT_APP_JWT_SECRET_KEY, { expiresIn: '1h' });
 

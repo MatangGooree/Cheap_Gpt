@@ -13,18 +13,25 @@ export function Classifier(props) {
         // 코드 블록인 경우
         const full = part.replaceAll('```', '').split('\n'); // 백틱 제거
         const lang = full[0].trim().toLowerCase();
-        if (langList.includes(lang)) {
-          full.shift();
-        }
+        full.shift();
         const code = full.join('\n');
-        return (
-          <div className="codes_back" key={`${index}-code`}>
-            <h1 className="code_top">{lang}</h1>
-            <SyntaxHighlighter language={lang} style={dracula} className="codes">
-              {code}
+
+        if (langList.includes(lang)) {
+          return (
+            <div className="codes_back" key={`${index}-code`}>
+              <h1 className="code_top">{lang}</h1>
+              <SyntaxHighlighter language={lang} style={dracula} className="codes">
+                {code.trimEnd()}
+              </SyntaxHighlighter>
+            </div>
+          );
+        } else {
+          return (
+            <SyntaxHighlighter language={null} style={dracula} className="codes code_alone">
+              {code.trimEnd()}
             </SyntaxHighlighter>
-          </div>
-        );
+          );
+        }
       } else {
         const texts = part.split(/(\*\*[\s\S]*?\*\*|`[^`]+`|###.*?\n)/g);
         return (
