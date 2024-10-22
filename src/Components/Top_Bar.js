@@ -12,6 +12,7 @@ import { setIsListOpen } from '../Redux/Ui';
 import { DropdownDivider, DropdownMenu } from 'react-bootstrap';
 import Custom_modal from './Custom_modal';
 import { jwtDecode } from 'jwt-decode';
+import { fetch } from 'openai/_shims/index.mjs';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -37,6 +38,22 @@ function Top_Bar() {
   const handleLogout = () => {
     sessionStorage.removeItem('jwt');
     setJwt(null);
+  };
+
+  const handleWrite =()=>{
+
+const token = sessionStorage.getItem('jwt');
+const conver = sessionStorage.getItem('conversation');
+
+    fetch('/DBquery',{
+      method :'POST',
+      headers:{
+        'Content-Type': 'application/json',
+         'Authorization': `Bearer ${token}`
+      },
+    body : JSON.stringify({job : 'Insert', table :'Conversation', data : {user_id : '',conversation:conver } })
+
+    })
   };
 
   useEffect(() => {
@@ -70,7 +87,7 @@ function Top_Bar() {
           <button id="list_btn_chat" onClick={() => dispatch(setIsListOpen())}>
             <img src={Open_list_icon} alt="" />
           </button>
-          <button id="write_btn_chat">
+          <button id="write_btn_chat" onClick={handleWrite}>
             <img src={Plus_icon} alt="" />
           </button>
         </div>

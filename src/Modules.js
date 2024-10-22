@@ -95,7 +95,7 @@ export function GetAnswer(streamChunk) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
-  }).then((response) => {
+}).then((response) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 

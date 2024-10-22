@@ -20,30 +20,12 @@ const certificate = fs.readFileSync('./Keys/cert.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
 
-const model_trans = {
-  'GPT-4o mini': 'gpt-4o-mini',
-  'GPT-4o': 'gpt-4o',
-  'GPT-3.5 Turbo': 'gpt-3.5-turbo-0125',
-};
 
 app.use(express.urlencoded({ extended: true }));
 // JSON 형식의 요청 바디를 처리하기 위한 미들웨어
 app.use(express.json());
 
-// 유저 정보 추출
-const getUserInfo = async (accessToken) => {
-  try {
-    const response = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
-      headers: {
-        Authorization: `Bearer ${accessToken.accessToken}`,
-      },
-    });
-    return response.data; // 사용자 정보를 반환합니다.
-  } catch (error) {
-    // console.error('Error fetching user info:', error);
-    throw error;
-  }
-};
+
 
 //인증 미들웨어
 const authenticate = (req, res, next) => {
@@ -54,7 +36,7 @@ const authenticate = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.REACT_APP_JWT_SECRET_KEY);
     req.user = decoded.user;
     next();
   } catch (error) {
@@ -138,6 +120,36 @@ app.post('/callGptAPI', async (req, res) => {
   }
 });
 
+
+app.post('/DBquery',authenticate, async (req,res)=>{
+
+
+  
+  const job = req.body.job;
+  
+  let result ='';
+  
+  if('user_id' in req.body.data){
+    //아이디를 포함한 데이터를 다뤄야 할 경우
+    console.log('유저아이디 있음');
+    req.body.data.user_id = req.user.id;
+    
+    
+  }
+  
+  console.log(req.body);
+  switch (job) {
+    case 'Insert':
+      result = await Insert_DB(req.body.table,req.body.data);
+      break;
+  
+    default:
+      break;
+  }
+
+});
+
+
 //데이터 베이스 관련 함수
 async function Insert_DB(table, data) {
   let conn;
@@ -145,13 +157,12 @@ async function Insert_DB(table, data) {
     // 데이터베이스 연결
     conn = await pool.getConnection();
 
-    console.log(data.Keys);
-
     //존재 여부 확인
     const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${Object.keys(data)[0]} = ?`, [Object.values(data)[0]]);
 
     if (check[0].count > 0) {
       // 이미 존재
+      return '이미 존재';
     } else {
       //없음
       const values =
@@ -181,13 +192,10 @@ async function Insert_DB(table, data) {
 app.post('/auth/google', async (req, res) => {
   const code = req.body.code;
 
-  console.log(code);
-
   if (!code) {
     return res.status(400).send('Authorization code is missing');
   }
 
-  console.log(process.env.CLIENT_SECRET);
   try {
     // 구글 토큰 엔드포인트에 POST 요청하여 토큰 교환
     const response = await axios.post('https://oauth2.googleapis.com/token', {
@@ -202,9 +210,7 @@ app.post('/auth/google', async (req, res) => {
 
     const userInfo = await getUserInfo({ accessToken: access_token, refreshToken: refresh_token });
 
-    console.log(userInfo);
-
-    Insert_DB('users', { id: userInfo.id, username: userInfo.name, email: userInfo.email });
+    Insert_DB('users', { user_id: userInfo.id, username: userInfo.name, email: userInfo.email });
 
     const token = jwt.sign({ user: userInfo }, process.env.REACT_APP_JWT_SECRET_KEY, { expiresIn: '1h' });
 
@@ -214,3 +220,18 @@ app.post('/auth/google', async (req, res) => {
     res.status(500).json({ error: 'Failed to exchange code for token' });
   }
 });
+
+// 유저 정보 추출
+const getUserInfo = async (accessToken) => {
+  try {
+    const response = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken.accessToken}`,
+      },
+    });
+    return response.data; // 사용자 정보를 반환합니다.
+  } catch (error) {
+    // console.error('Error fetching user info:', error);
+    throw error;
+  }
+};
