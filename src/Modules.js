@@ -120,7 +120,7 @@ export function GetAnswer(streamChunk) {
   });
 }
 
-export async function SaveDB() {
+export async function SaveConv() {
   const token = sessionStorage.getItem('jwt');
   const conver = sessionStorage.getItem('conversation');
   const conv_ID = sessionStorage.getItem('conv_id');
@@ -128,11 +128,11 @@ export async function SaveDB() {
   const requestData = {
     job: 'Insert',
     table: 'Conversation',
-    data: { conversation_id: conv_ID, user_id: '', conversation: conver },
+    data: { conversation_id: conv_ID, user_id: '', conversation: conver},
   };
 
   try {
-   const saveResult = await axios.post('/DBquery', requestData, {
+    const saveResult = await axios.post('/DBquery', requestData, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -140,7 +140,6 @@ export async function SaveDB() {
     });
     const { result } = saveResult.data;
     return result;
-
   } catch (error) {
   } finally {
   }

@@ -1,12 +1,27 @@
-import { configureStore } from '@reduxjs/toolkit';
-import uiReducer from './Ui';  // 우리가 만든 슬라이스 리듀서
+
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // 기본적으로 로컬 스토리지를 사용
+import uiReducer from './Ui';  
 import conversation from './Conversation'
 
-const store = configureStore({
-  reducer: {
-    UI: uiReducer,  // 슬라이스 리듀서를 store에 등록
-    Conversation : conversation
-  }
+const persistConfig = {
+  key: 'root',
+  storage,
+};
+
+const rootReducer = combineReducers({
+  UI: uiReducer,
+  Conversation: conversation,
 });
 
-export default store;
+const persistedReducer = persistReducer(persistConfig,rootReducer);
+
+
+const store = configureStore({
+  reducer: persistedReducer,
+});
+
+const persistor = persistStore(store);
+
+export { store, persistor };

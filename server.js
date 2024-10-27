@@ -129,6 +129,9 @@ app.post('/DBquery', authenticate, async (req, res) => {
     req.body.data.user_id = req.user.id;
   }
 
+
+
+
   try {
     switch (job) {
       case 'Insert':
@@ -170,8 +173,6 @@ async function Insert_DB(table, data) {
       const insertQuery = `INSERT INTO ${table} (${Object.keys(data)}) VALUES ${values}`;
       const userData = Object.values(data);
       const queryResult = await conn.query(insertQuery, userData);
-
-      console.log(queryResult);
 
       return queryResult;
     }
@@ -229,3 +230,6 @@ const getUserInfo = async (accessToken) => {
     throw error;
   }
 };
+
+
+//대화 요약 요청

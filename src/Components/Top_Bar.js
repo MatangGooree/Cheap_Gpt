@@ -13,7 +13,7 @@ import { DropdownDivider, DropdownMenu } from 'react-bootstrap';
 import Custom_modal from './Custom_modal';
 import { jwtDecode } from 'jwt-decode';
 import { fetch } from 'openai/_shims/index.mjs';
-import { SaveDB } from '../Modules';
+import { SaveConv } from '../Modules';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -42,13 +42,9 @@ function Top_Bar() {
   };
 
   async function handleWrite() {
-
     try {
-     const result = await SaveDB(); // SaveDB 호출
-     console.log(result); 
-
-
-
+      const result = await SaveConv(); // SaveDB 호출
+      console.log(result);
     } catch (error) {
       console.error('저장 중 오류 발생:', error); // 에러 처리
     } finally {
