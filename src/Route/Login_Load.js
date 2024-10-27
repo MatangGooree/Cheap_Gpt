@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
+import { useSelector,useDispatch } from 'react-redux';
+import { setJwt } from '../Redux/User';
 
 const Login_Load = () => {
+
+  const dispatch = useDispatch();
+
   const authenticateUser = async (aCode) => {
     try {
       // 인증 코드를 서버로 전송
@@ -10,7 +15,8 @@ const Login_Load = () => {
       const { token } = response.data; // JWT 받아오기
 
       // JWT를 로컬 스토리지에 저장
-      sessionStorage.setItem('jwt', token);
+      // sessionStorage.setItem('jwt', token);
+      dispatch(setJwt(token));
 
       // 이후 메인 페이지로 리디렉션
       window.location.href = '/';

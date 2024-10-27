@@ -4,23 +4,23 @@ import { v4 as uuidv4 } from 'uuid';
 let nowConversation = createSlice({
   name: 'Conversation',
   initialState: {
-    convId: '',
+    convId: null,
     date: '',
     whole: [],
   }, // 초기 상태 정의
 
   reducers: {
     setConvId(state, action) {
-      state.convId = action.payload.convId;
+      state.convId = action.payload;
     },
-    setConvDate(state,action){
+    setConvDate(state, action) {
       state.date = new Date();
     },
-    addChat(state, action) {
-      state.whole.push(action.payload);
+    setConv(state, action) {
+      state.whole = action.payload
     },
   },
 });
 
-export let { setConvId: setNowConversation, addChat } = nowConversation.actions; // 액션을 정확히 추출
+export let { setConvId, setConvDate, setConv } = nowConversation.actions; // 액션을 정확히 추출
 export default nowConversation.reducer;

@@ -129,7 +129,9 @@ app.post('/DBquery', authenticate, async (req, res) => {
     req.body.data.user_id = req.user.id;
   }
 
-
+  if ('subject' in req.body.data) {
+    req.body.data.subject = "요약예시";
+  }
 
 
   try {
@@ -182,6 +184,9 @@ async function Insert_DB(table, data) {
     if (conn) conn.release(); // 반드시 연결을 반환
   }
 }
+
+
+
 
 //로그인 관련
 app.post('/auth/google', async (req, res) => {

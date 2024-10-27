@@ -14,6 +14,7 @@ import Custom_modal from './Custom_modal';
 import { jwtDecode } from 'jwt-decode';
 import { fetch } from 'openai/_shims/index.mjs';
 import { SaveConv } from '../Modules';
+import { setJwt ,setProfilePicture,setNickname} from '../Redux/User';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -26,9 +27,12 @@ function Top_Bar() {
 
   const [models, setModels] = useState(['GPT-4o mini', 'GPT-4o', 'GPT-3.5 Turbo']);
 
-  const [profileImg, setProfileImg] = useState(Open_list_icon);
+  // const [profileImg, setProfileImg] = useState(Open_list_icon);
+  const profileImg = useSelector((state)=>state.User.profile_picture)
 
-  const [jwt, setJwt] = useState(sessionStorage.getItem('jwt')); // JWT를 상태로 관리
+  // const [jwt, setJwt] = useState(sessionStorage.getItem('jwt')); // JWT를 상태로 관리
+
+  const jwt = useSelector((state)=>state.User.jwt)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -37,8 +41,9 @@ function Top_Bar() {
     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=254976605878-1bhh5msadip435j094psc9vg9jmp8a7u.apps.googleusercontent.com&redirect_uri=${process.env.REACT_APP_REDIRECT_URI}&response_type=code&scope=profile email`;
   };
   const handleLogout = () => {
-    sessionStorage.removeItem('jwt');
-    setJwt(null);
+    // sessionStorage.removeItem('jwt');
+    //  setJwt(null);
+    dispatch(setJwt(''));
   };
 
   async function handleWrite() {
@@ -57,8 +62,16 @@ function Top_Bar() {
 
   useEffect(() => {
     if (jwt == null) {
-      setProfileImg(Setting_icon);
-      sessionStorage.removeItem('userInfo');
+
+
+      // setProfileImg(Setting_icon);
+      // sessionStorage.removeItem('userInfo');
+
+      dispatch(setProfilePicture(Setting_icon));
+      dispatch(setNickname(''));
+      
+
+
       setModels(['GPT-4o mini']);
       return;
     }
@@ -66,8 +79,13 @@ function Top_Bar() {
     setModels(['GPT-4o mini', 'GPT-4o', 'GPT-3.5 Turbo']);
 
     const decoded = jwtDecode(jwt);
-    sessionStorage.setItem('userInfo', JSON.stringify({ Nickname: decoded.user.name, profile_picture: decoded.user.picture }));
-    setProfileImg(JSON.parse(sessionStorage.getItem('userInfo')).profile_picture);
+    // sessionStorage.setItem('userInfo', JSON.stringify({ Nickname: decoded.user.name, profile_picture: decoded.user.picture }));
+
+    
+    dispatch(setProfilePicture(decoded.user.picture));
+    dispatch(setNickname(decoded.user.name));
+
+    // setProfileImg(JSON.parse(sessionStorage.getItem('userInfo')).profile_picture);
   }, [jwt]);
 
   return (
@@ -108,7 +126,7 @@ function Top_Bar() {
           <div className="dropdown_item" onClick={handleShow}>
             맞춤 설정
           </div>
-          {sessionStorage.getItem('jwt') == null ? (
+          {jwt == null ? (
             <div className="dropdown_item" onClick={handleLogin}>
               로그인
             </div>

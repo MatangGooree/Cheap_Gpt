@@ -2,16 +2,20 @@ import React, { forwardRef, useState, useEffect, useRef, useMemo } from 'react';
 import './Chat_room.css';
 import { useSelector, useDispatch } from 'react-redux';
 import ChatBubble from './Chat_bubble';
-
+import { setConvDate, setConvId, setConv } from '../Redux/Conversation';
+import { setWaitAnswer } from '../Redux/Ui';
 const Chat_room = forwardRef((props, ref) => {
   const chatRef = useRef(null);
-  const isListOpen = useSelector((state) => state.UI.isOpen);
+  const UI = useSelector((state) => state.UI);
 
-  const [wholeConversation, setWholeConversation] = useState(JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation')));
+  const dispatch = useDispatch();
+
+  const wholeConversation = useSelector((state) => state.Conversation.whole);
 
   useEffect(() => {
+
     if (props.user_Chat.content != '') {
-      setWholeConversation((prev) => [...prev, { role: props.user_Chat.role, content: props.user_Chat.content }]);
+      dispatch(setConv(([...wholeConversation, { role: props.user_Chat.role, content: props.user_Chat.content }])));
     }
   }, [props.user_Chat]);
 
@@ -23,14 +27,17 @@ const Chat_room = forwardRef((props, ref) => {
     }
 
     if (wholeConversation[wholeConversation.length - 1].role == 'user') {
-      sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
 
-      setWholeConversation((prev) => [...prev, { role: 'assistant', content: '' }]);
+      dispatch(setConv([...wholeConversation, { role: 'assistant', content: '' }]));
 
-      props.setWaitAnswer(true);
-    } else if (wholeConversation[wholeConversation.length - 1].role == 'assistant' && wholeConversation[wholeConversation.length - 1].content != '') {
-      sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
-    }
+
+      dispatch(setWaitAnswer(true));
+
+
+    } 
+    // else if (wholeConversation[wholeConversation.length - 1].role == 'assistant' && wholeConversation[wholeConversation.length - 1].content != '') {
+    //   sessionStorage.setItem('conversation', JSON.stringify(wholeConversation));
+    // }
     chatRef.current.scrollTo({
       top: chatRef.current.scrollHeight,
       behavior: 'smooth',
@@ -38,9 +45,9 @@ const Chat_room = forwardRef((props, ref) => {
   }, [wholeConversation]);
 
   return (
-    <div className={isListOpen ? 'Chat_room_back list_opened' : 'Chat_room_back'} ref={chatRef}>
+    <div className={UI.isOpen ? 'Chat_room_back list_opened' : 'Chat_room_back'} ref={chatRef}>
       {wholeConversation.length > 0 ? (
-        wholeConversation.map((chat, index) => <ChatBubble key={`${index}-bubble`} role={chat.role} message={chat.content} setWaitAnswer={props.setWaitAnswer} setWholeConversation={setWholeConversation} index={index} />)
+        wholeConversation.map((chat, index) => <ChatBubble key={`${index}-bubble`} role={chat.role} message={chat.content} index={index} />)
       ) : (
         <div></div> // 메시지가 없을 때 보여줄 내용
       )}

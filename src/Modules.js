@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { store } from './Redux/Store';
+
 const langList = ['python', 'java', 'csharp', 'c', 'cpp', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
 
 export function Classifier(props) {
@@ -67,7 +69,7 @@ export function Classifier(props) {
 }
 
 export function GetAnswer(streamChunk) {
-  const wholeConversation = JSON.parse(sessionStorage.getItem('conversation')) == null ? [] : JSON.parse(sessionStorage.getItem('conversation'));
+  const wholeConversation = store.getState().Conversation.whole;
 
   let max = 10;
 
@@ -121,14 +123,19 @@ export function GetAnswer(streamChunk) {
 }
 
 export async function SaveConv() {
-  const token = sessionStorage.getItem('jwt');
-  const conver = sessionStorage.getItem('conversation');
-  const conv_ID = sessionStorage.getItem('conv_id');
+
+  const token = store.getState().User.jwt;
+
+  const conversation = JSON.stringify(store.getState().Conversation.whole);
+  const conv_ID = store.getState().Conversation.convId;
+
+  const now = new Date();
+  const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
   const requestData = {
     job: 'Insert',
     table: 'Conversation',
-    data: { conversation_id: conv_ID, user_id: '', conversation: conver},
+    data: { conversation_id: conv_ID, user_id: '', conversation: conversation, date: formattedDateTime, subject: '' },
   };
 
   try {
@@ -144,3 +151,8 @@ export async function SaveConv() {
   } finally {
   }
 }
+
+
+export async function LoadConv(){
+
+} 
