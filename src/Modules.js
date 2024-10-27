@@ -95,7 +95,7 @@ export function GetAnswer(streamChunk) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ custom: assistant_ref, conversation: context, model: sessionStorage.getItem('model') }),
-}).then((response) => {
+  }).then((response) => {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
@@ -118,4 +118,30 @@ export function GetAnswer(streamChunk) {
       reader.read().then(processText);
     });
   });
+}
+
+export async function SaveDB() {
+  const token = sessionStorage.getItem('jwt');
+  const conver = sessionStorage.getItem('conversation');
+  const conv_ID = sessionStorage.getItem('conv_id');
+
+  const requestData = {
+    job: 'Insert',
+    table: 'Conversation',
+    data: { conversation_id: conv_ID, user_id: '', conversation: conver },
+  };
+
+  try {
+   const saveResult = await axios.post('/DBquery', requestData, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const { result } = saveResult.data;
+    return result;
+
+  } catch (error) {
+  } finally {
+  }
 }

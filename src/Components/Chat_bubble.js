@@ -6,7 +6,7 @@ import { Classifier, GetAnswer } from '../Modules';
 
 function Chat_Bubble(props) {
   //새로 만들어졌는데 role이 어시스턴트고, 메세지가 없으면 모듈 호출?
-  const [streamMsg, setStreamMsg] = useState('');
+ const [streamMsg, setStreamMsg] = useState('');
 
   let finalMsg = '';
 

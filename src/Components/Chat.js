@@ -23,17 +23,19 @@ function Chat() {
   };
 
   const EnterInput = () => {
+    if (inputVal.trim() === '') {
+      return; // 입력값이 비어있는 경우 아무것도 하지 않음
+    }
     setUser_Chat({ role: 'user', content: inputVal });
 
     setWaitAnswer(true);
-
-    setInputVal('');
   };
 
   const EnterKeyDown = (event) => {
-    if (event.key === 'Enter' && !waitAnswer) {
+    if (event.key == 'Enter' && !waitAnswer) {
       event.preventDefault();
       EnterInput();
+      setInputVal('');
     }
   };
 
@@ -63,7 +65,7 @@ function Chat() {
       <Top_bar />
       <Chat_room ref={chatRoomRef} user_Chat={user_chat} waitAnswer={waitAnswer} setWaitAnswer={setWaitAnswer} />
       <div id="Ask_group" ref={groupRef}>
-        <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyDown={EnterKeyDown} value={inputVal} />
+        <textarea id="tb_input" ref={inputRef} onInput={input_change} onKeyPress={EnterKeyDown} value={inputVal} />
         <button id="input_button" className={isInput && !waitAnswer ? 'hoverOn' : ''} onClick={EnterInput} disabled={isInput && !waitAnswer ? false : true} style={isInput && !waitAnswer ? { backgroundColor: 'white', color: 'black' } : {}}>
           <img src={InputIcon} />
         </button>

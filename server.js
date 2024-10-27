@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6600;
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -19,13 +19,11 @@ const certificate = fs.readFileSync('./Keys/cert.pem', 'utf8');
 
 const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
-
-
+const cors = require('cors');
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 // JSON 형식의 요청 바디를 처리하기 위한 미들웨어
 app.use(express.json());
-
-
 
 //인증 미들웨어
 const authenticate = (req, res, next) => {
@@ -120,35 +118,31 @@ app.post('/callGptAPI', async (req, res) => {
   }
 });
 
-
-app.post('/DBquery',authenticate, async (req,res)=>{
-
-
-  
+app.post('/DBquery', authenticate, async (req, res) => {
   const job = req.body.job;
-  
-  let result ='';
-  
-  if('user_id' in req.body.data){
+
+  let result = '';
+
+  if ('user_id' in req.body.data) {
     //아이디를 포함한 데이터를 다뤄야 할 경우
     console.log('유저아이디 있음');
     req.body.data.user_id = req.user.id;
-    
-    
-  }
-  
-  console.log(req.body);
-  switch (job) {
-    case 'Insert':
-      result = await Insert_DB(req.body.table,req.body.data);
-      break;
-  
-    default:
-      break;
   }
 
+  try {
+    switch (job) {
+      case 'Insert':
+         result = await Insert_DB(req.body.table, req.body.data);
+        break;
+
+      default:
+        break;
+    }
+    res.json({ result: result.insertId.toString() }); 
+  } catch (error) {
+  } finally {
+  }
 });
-
 
 //데이터 베이스 관련 함수
 async function Insert_DB(table, data) {
@@ -161,6 +155,8 @@ async function Insert_DB(table, data) {
     const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${Object.keys(data)[0]} = ?`, [Object.values(data)[0]]);
 
     if (check[0].count > 0) {
+
+      console.log("존재하는DB")
       // 이미 존재
       return '이미 존재';
     } else {
@@ -173,13 +169,11 @@ async function Insert_DB(table, data) {
         ')';
       const insertQuery = `INSERT INTO ${table} (${Object.keys(data)}) VALUES ${values}`;
       const userData = Object.values(data);
-      await conn.query(insertQuery, userData, (err, result) => {
-        if (err) {
-          console.log('err' + err);
-        } else {
-          console.log(result);
-        }
-      });
+      const queryResult = await conn.query(insertQuery, userData);
+
+      console.log(queryResult);
+
+      return queryResult;
     }
   } catch (err) {
     console.error('오류 발생:', err);

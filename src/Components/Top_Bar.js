@@ -13,6 +13,7 @@ import { DropdownDivider, DropdownMenu } from 'react-bootstrap';
 import Custom_modal from './Custom_modal';
 import { jwtDecode } from 'jwt-decode';
 import { fetch } from 'openai/_shims/index.mjs';
+import { SaveDB } from '../Modules';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -40,21 +41,19 @@ function Top_Bar() {
     setJwt(null);
   };
 
-  const handleWrite =()=>{
+  async function handleWrite() {
 
-const token = sessionStorage.getItem('jwt');
-const conver = sessionStorage.getItem('conversation');
+    try {
+     const result = await SaveDB(); // SaveDB 호출
+     console.log(result); 
 
-    fetch('/DBquery',{
-      method :'POST',
-      headers:{
-        'Content-Type': 'application/json',
-         'Authorization': `Bearer ${token}`
-      },
-    body : JSON.stringify({job : 'Insert', table :'Conversation', data : {user_id : '',conversation:conver } })
 
-    })
-  };
+
+    } catch (error) {
+      console.error('저장 중 오류 발생:', error); // 에러 처리
+    } finally {
+    }
+  }
 
   useEffect(() => {
     sessionStorage.setItem('model', model);

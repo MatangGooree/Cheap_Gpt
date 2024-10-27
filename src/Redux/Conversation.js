@@ -7,8 +7,6 @@ let nowConversation = createSlice({
     convId: '',
     date: '',
     subject:'',
-    max: 10,
-    memory: [],
     whole: [],
   }, // 초기 상태 정의
 
@@ -19,15 +17,6 @@ let nowConversation = createSlice({
     },
     addChat(state, action) {
       state.date = new Date();
-
-      if (state.convId == '') {
-        state.convId = uuidv4();
-      }
-
-      if (state.memory.length >= state.max) {
-        state.memory.shift(); // 큐에서 가장 오래된 메시지 제거
-      }
-      state.memory.push(action.payload);
       state.whole.push(action.payload);
     },
   },
