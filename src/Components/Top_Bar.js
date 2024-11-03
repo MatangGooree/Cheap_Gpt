@@ -13,8 +13,8 @@ import { DropdownDivider, DropdownMenu } from 'react-bootstrap';
 import Custom_modal from './Custom_modal';
 import { jwtDecode } from 'jwt-decode';
 import { fetch } from 'openai/_shims/index.mjs';
-import { SaveConv } from '../Modules';
-import { setJwt ,setProfilePicture,setNickname} from '../Redux/User';
+import { SaveConv, LoadConv_List } from '../Modules';
+import { setJwt, setProfilePicture, setNickname } from '../Redux/User';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -28,11 +28,11 @@ function Top_Bar() {
   const [models, setModels] = useState(['GPT-4o mini', 'GPT-4o', 'GPT-3.5 Turbo']);
 
   // const [profileImg, setProfileImg] = useState(Open_list_icon);
-  const profileImg = useSelector((state)=>state.User.profile_picture)
+  const profileImg = useSelector((state) => state.User.profile_picture);
 
   // const [jwt, setJwt] = useState(sessionStorage.getItem('jwt')); // JWT를 상태로 관리
 
-  const jwt = useSelector((state)=>state.User.jwt)
+  const jwt = useSelector((state) => state.User.jwt);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -43,7 +43,7 @@ function Top_Bar() {
   const handleLogout = () => {
     // sessionStorage.removeItem('jwt');
     //  setJwt(null);
-    dispatch(setJwt(''));
+    dispatch(setJwt(null));
   };
 
   async function handleWrite() {
@@ -56,21 +56,20 @@ function Top_Bar() {
     }
   }
 
+  async function handleLoadConv() {
+    try {
+      await LoadConv_List();
+    } catch (error) {}
+  }
+
   useEffect(() => {
     sessionStorage.setItem('model', model);
   }, [model]);
 
   useEffect(() => {
     if (jwt == null) {
-
-
-      // setProfileImg(Setting_icon);
-      // sessionStorage.removeItem('userInfo');
-
       dispatch(setProfilePicture(Setting_icon));
       dispatch(setNickname(''));
-      
-
 
       setModels(['GPT-4o mini']);
       return;
@@ -79,13 +78,10 @@ function Top_Bar() {
     setModels(['GPT-4o mini', 'GPT-4o', 'GPT-3.5 Turbo']);
 
     const decoded = jwtDecode(jwt);
-    // sessionStorage.setItem('userInfo', JSON.stringify({ Nickname: decoded.user.name, profile_picture: decoded.user.picture }));
-
-    
     dispatch(setProfilePicture(decoded.user.picture));
     dispatch(setNickname(decoded.user.name));
 
-    // setProfileImg(JSON.parse(sessionStorage.getItem('userInfo')).profile_picture);
+    handleLoadConv();
   }, [jwt]);
 
   return (

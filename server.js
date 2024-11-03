@@ -1,18 +1,19 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+// const PORT = process.env.PORT || 5000;
 const PORT = process.env.PORT || 6600;
+
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const mariadb = require('mariadb');
-
 const apiKey = process.env.OPENAI_API_KEY; // OpenAI에서 발급받은 API 키
 const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-const fs = require('fs');
 const https = require('https');
+const fs = require('fs');
 
 const privateKey = fs.readFileSync('./Keys/privkey.pem', 'utf8');
 const certificate = fs.readFileSync('./Keys/cert.pem', 'utf8');
@@ -28,7 +29,6 @@ app.use(express.json());
 //인증 미들웨어
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
@@ -36,9 +36,11 @@ const authenticate = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.REACT_APP_JWT_SECRET_KEY);
     req.user = decoded.user;
+    console.log('인증완료');
     next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
+    console.log('인증실패');
   }
 };
 
@@ -58,11 +60,6 @@ httpsServer.listen(PORT, () => {
 
 // 빌드된 React 정적 파일 제공
 app.use(express.static(path.join(__dirname, '/build')));
-
-// 모든 요청에 대해 React의 index.html 반환
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '/build', 'index.html'));
-});
 
 // GPT 응답
 app.post('/callGptAPI', async (req, res) => {
@@ -123,27 +120,26 @@ app.post('/DBquery', authenticate, async (req, res) => {
 
   let result = '';
 
-  if ('user_id' in req.body.data) {
+  if (Object.keys(req.body.data).includes('user_id')) {
     //아이디를 포함한 데이터를 다뤄야 할 경우
     console.log('유저아이디 있음');
     req.body.data.user_id = req.user.id;
   }
 
-  if ('subject' in req.body.data) {
-    req.body.data.subject = "요약예시";
+  if (Object.keys(req.body.data).includes('subject')) {
+    req.body.data.subject = '요약예시';
   }
-
 
   try {
     switch (job) {
       case 'Insert':
-         result = await Insert_DB(req.body.table, req.body.data);
+        result = await Insert_DB(req.body.table, req.body.data);
+        res.json({ result: result.insertId.toString() });
         break;
 
       default:
         break;
     }
-    res.json({ result: result.insertId.toString() }); 
   } catch (error) {
   } finally {
   }
@@ -156,12 +152,12 @@ async function Insert_DB(table, data) {
     // 데이터베이스 연결
     conn = await pool.getConnection();
 
-    //존재 여부 확인
+    //존재 여부 확인 (0번째 인덱스는 무조건 기본키가 되는 값으로 해야함)
     const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${Object.keys(data)[0]} = ?`, [Object.values(data)[0]]);
 
     if (check[0].count > 0) {
-
-      console.log("존재하는DB")
+      console.log('존재하는DB');
+      //기본키 제외하고 업데이트 하도록
       // 이미 존재
       return '이미 존재';
     } else {
@@ -184,9 +180,58 @@ async function Insert_DB(table, data) {
     if (conn) conn.release(); // 반드시 연결을 반환
   }
 }
+app.get('/DBget', authenticate, async (req, res) => {
+  try {
+    let result = null;
+    switch (req.query.job) {
+      case 'GetConvList':
+        result = await GetConvList(req.user.id);
+        res.json(result);
+        break;
 
+      case 'GetConversation':
+        console.log('대화 조회');
+        result = await GetConversation(req.query.id);
+        res.json(result);
+        break;
 
+      default:
+        res.status(400).json({ error: 'Invalid job parameter' });
+        break;
+    }
+  } catch (error) {
+    console.error('Error processing request:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
+//대화 '리스트' 가져오기
+async function GetConvList(user_id) {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(`SELECT  conversation_id, date,subject FROM Conversation WHERE user_id = ${user_id} 
+  ORDER BY date ASC`);
+
+    return rows;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//대화 가져오기
+async function GetConversation(conv_id) {
+  let conn;
+
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query(`SELECT * FROM Conversation WHERE conversation_id = ?`, [conv_id]);
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 //로그인 관련
 app.post('/auth/google', async (req, res) => {
@@ -236,5 +281,9 @@ const getUserInfo = async (accessToken) => {
   }
 };
 
-
 //대화 요약 요청
+
+// 모든 요청에 대해 React의 index.html 반환
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '/build', 'index.html'));
+});

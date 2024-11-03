@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage'; // 기본적으로 로컬 스�
 import uiReducer from './Ui';  
 import conversation from './Conversation'
 import user from './User'
+import conv_list from './Conv_List'
 
 const persistConfig = {
   key: 'root',
@@ -14,7 +15,9 @@ const persistConfig = {
 const rootReducer = combineReducers({
   UI: uiReducer,
   Conversation: conversation,
-  User : user
+  User : user,
+  Conv_List : conv_list
+
 });
 
 const persistedReducer = persistReducer(persistConfig,rootReducer);

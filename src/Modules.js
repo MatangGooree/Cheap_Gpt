@@ -2,7 +2,8 @@ import axios from 'axios';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { store } from './Redux/Store';
-
+import { setList } from './Redux/Conv_List';
+import { setConv,setConvDate,setConvId } from './Redux/Conversation';
 const langList = ['python', 'java', 'csharp', 'c', 'cpp', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
 
 export function Classifier(props) {
@@ -123,7 +124,6 @@ export function GetAnswer(streamChunk) {
 }
 
 export async function SaveConv() {
-
   const token = store.getState().User.jwt;
 
   const conversation = JSON.stringify(store.getState().Conversation.whole);
@@ -152,7 +152,61 @@ export async function SaveConv() {
   }
 }
 
+export async function LoadConv_List() {
+  console.log('LoadConv진입');
 
-export async function LoadConv(){
+  const token = store.getState().User.jwt;
 
-} 
+  const requestData = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      job: 'GetConvList',
+    },
+  };
+
+  try {
+    const saveResult = await axios.get('/DBget', requestData);
+
+    const result = saveResult.data;
+
+    store.dispatch(setList(result));
+    return result;
+  } catch (error) {
+    console.log(error);
+  } finally {
+  }
+}
+
+export async function LoadConversation(id) {
+  const token = store.getState().User.jwt;
+  const requestData = {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    params: {
+      job: 'GetConversation',
+      id: id,
+    },
+  };
+
+  try {
+    const saveResult = await axios.get('/DBget', requestData);
+
+    const result = saveResult.data;
+
+    console.log(result);
+
+    store.dispatch(setConvDate(result[0].date));
+    store.dispatch(setConvId(result[0].conversation_id));
+    store.dispatch(setConv(JSON.parse(result[0].conversation)));
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  } finally {
+  }
+}
