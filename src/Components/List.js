@@ -5,15 +5,29 @@ import List_btn_icon from '../Sources/Close.svg';
 import Write_btn_icon from '../Sources/new.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { setIsListOpen } from '../Redux/Ui';
-import { LoadConversation } from '../Modules';
+import { SaveConv, LoadConv_List, LoadConversation } from '../Modules';
+import { setConv, setConvId } from '../Redux/Conversation';
+
 function List() {
   const dispatch = useDispatch();
 
   const List = useSelector((state) => state.Conv_List.list);
 
   async function handleLoadConv(id) {
-    console.log(id);
     LoadConversation(id);
+  }
+
+  async function handleWrite() {
+    try {
+      const result = await SaveConv(); // SaveDB 호출
+
+      //성공 시 조건문안에 넣기
+      dispatch(setConv([]));
+      dispatch(setConvId(null));
+    } catch (error) {
+      console.error('저장 중 오류 발생:', error); // 에러 처리
+    } finally {
+    }
   }
 
   const activeOn = (event) => {
@@ -30,7 +44,7 @@ function List() {
         <button id="list_btn" onClick={() => dispatch(setIsListOpen())}>
           <img src={List_btn_icon} alt="" />
         </button>
-        <button id="write_btn">
+        <button id="write_btn" onClick={handleWrite}>
           <img src={Write_btn_icon} alt="" />
         </button>
       </div>
@@ -38,7 +52,7 @@ function List() {
         <ul className="list-group">
           {List.length > 0
             ? List.map((conv, index) => (
-                <li id="conversation_list" className="list-group-item" onClick={()=>handleLoadConv(conv.conversation_id)} onMouseOver={activeOn} onMouseLeave={activeOff}>
+                <li id="conversation_list" className="list-group-item" onClick={() => handleLoadConv(conv.conversation_id)} onMouseOver={activeOn} onMouseLeave={activeOff}>
                   {conv.subject}
                 </li>
               ))

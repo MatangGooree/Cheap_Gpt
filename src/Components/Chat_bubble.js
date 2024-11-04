@@ -38,9 +38,8 @@ function Chat_Bubble(props) {
   return (
     <div className={props.role === 'user' ? 'chat_bubble user' : 'chat_bubble'}>
       {props.role === 'user' ? '' : <img className="chat_icon" src={gptIcon} alt="" />}
-      {/* <div className={props.role === 'user' ? 'bubble userbub' : 'bubble'}>{Classifier(props)}</div>  */}
       <div className={props.role === 'user' ? 'bubble userbub' : 'bubble'}>{Classifier({ role: props.role, message: props.role == 'user' ? props.message : streamMsg })}</div>
-      {/* <div className={props.role === 'user' ? 'bubble userbub' : 'bubble'}>{props.role == 'user' ? props.message : streamMsg}</div> */}
+      
     </div>
   );
 }

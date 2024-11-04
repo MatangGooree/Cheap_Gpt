@@ -3,7 +3,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { solarizedDark, solarizedLight, monokai, vsDark, dracula, atomOneDark, atomOneLight, twilight, materialDark, materialLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { store } from './Redux/Store';
 import { setList } from './Redux/Conv_List';
-import { setConv,setConvDate,setConvId } from './Redux/Conversation';
+import { setConv, setConvDate, setConvId } from './Redux/Conversation';
+import { jwtDecode } from 'jwt-decode';
 const langList = ['python', 'java', 'csharp', 'c', 'cpp', 'c++', 'javascript', 'ruby', 'go', 'php', 'swift', 'kotlin', 'c#', 'rust', 'typescript', 'shell', 'r', 'scala', 'perl', 'dart', 'elixir', 'lua', 'matlab', 'haskell', 'objective-c', 'visual basic .net', 'sql', 'groovy'];
 
 export function Classifier(props) {
@@ -145,7 +146,10 @@ export async function SaveConv() {
         Authorization: `Bearer ${token}`,
       },
     });
-    const { result } = saveResult.data;
+    const result = saveResult.data;
+
+    await LoadConv_List();
+
     return result;
   } catch (error) {
   } finally {
@@ -153,8 +157,6 @@ export async function SaveConv() {
 }
 
 export async function LoadConv_List() {
-  console.log('LoadConv진입');
-
   const token = store.getState().User.jwt;
 
   const requestData = {
@@ -181,6 +183,8 @@ export async function LoadConv_List() {
 }
 
 export async function LoadConversation(id) {
+  store.dispatch(setConv([]));
+
   const token = store.getState().User.jwt;
   const requestData = {
     headers: {
@@ -198,11 +202,9 @@ export async function LoadConversation(id) {
 
     const result = saveResult.data;
 
-    console.log(result);
-
+    store.dispatch(setConv(JSON.parse(result[0].conversation)));
     store.dispatch(setConvDate(result[0].date));
     store.dispatch(setConvId(result[0].conversation_id));
-    store.dispatch(setConv(JSON.parse(result[0].conversation)));
 
     return result;
   } catch (error) {
@@ -210,3 +212,21 @@ export async function LoadConversation(id) {
   } finally {
   }
 }
+
+function CheckToken() {
+  const token = store.getState().User.jwt;
+  if (!token) return true;
+
+  const decoded = jwtDecode(token);
+  if (decoded && decoded.exp) {
+    const currentTime = Math.floor(Date.now() / 1000);
+    return currentTime >= decoded.exp;
+  }
+  return true;
+}
+
+setInterval(() => {
+  if (CheckToken) {
+    localStorage.removeItem('persist:root');
+  }
+}, 1800000);

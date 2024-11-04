@@ -115,19 +115,21 @@ app.post('/callGptAPI', async (req, res) => {
   }
 });
 
+//DB 삽입 관련
 app.post('/DBquery', authenticate, async (req, res) => {
   const job = req.body.job;
 
   let result = '';
 
+  //아이디를 포함한 데이터를 다뤄야 할 경우
   if (Object.keys(req.body.data).includes('user_id')) {
-    //아이디를 포함한 데이터를 다뤄야 할 경우
     console.log('유저아이디 있음');
     req.body.data.user_id = req.user.id;
   }
 
+  //요약 관련
   if (Object.keys(req.body.data).includes('subject')) {
-    req.body.data.subject = '요약예시';
+    req.body.data.subject = await getSummery(req.body.data.conversation);
   }
 
   try {
@@ -145,41 +147,7 @@ app.post('/DBquery', authenticate, async (req, res) => {
   }
 });
 
-//데이터 베이스 관련 함수
-async function Insert_DB(table, data) {
-  let conn;
-  try {
-    // 데이터베이스 연결
-    conn = await pool.getConnection();
-
-    //존재 여부 확인 (0번째 인덱스는 무조건 기본키가 되는 값으로 해야함)
-    const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${Object.keys(data)[0]} = ?`, [Object.values(data)[0]]);
-
-    if (check[0].count > 0) {
-      console.log('존재하는DB');
-      //기본키 제외하고 업데이트 하도록
-      // 이미 존재
-      return '이미 존재';
-    } else {
-      //없음
-      const values =
-        '(' +
-        Object.keys(data)
-          .map(() => '?')
-          .join(', ') +
-        ')';
-      const insertQuery = `INSERT INTO ${table} (${Object.keys(data)}) VALUES ${values}`;
-      const userData = Object.values(data);
-      const queryResult = await conn.query(insertQuery, userData);
-
-      return queryResult;
-    }
-  } catch (err) {
-    console.error('오류 발생:', err);
-  } finally {
-    if (conn) conn.release(); // 반드시 연결을 반환
-  }
-}
+//DB읽기 요청
 app.get('/DBget', authenticate, async (req, res) => {
   try {
     let result = null;
@@ -204,34 +172,6 @@ app.get('/DBget', authenticate, async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-//대화 '리스트' 가져오기
-async function GetConvList(user_id) {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    const rows = await conn.query(`SELECT  conversation_id, date,subject FROM Conversation WHERE user_id = ${user_id} 
-  ORDER BY date ASC`);
-
-    return rows;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-//대화 가져오기
-async function GetConversation(conv_id) {
-  let conn;
-
-  try {
-    conn = await pool.getConnection();
-    const result = await conn.query(`SELECT * FROM Conversation WHERE conversation_id = ?`, [conv_id]);
-
-    return result;
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 //로그인 관련
 app.post('/auth/google', async (req, res) => {
@@ -266,8 +206,90 @@ app.post('/auth/google', async (req, res) => {
   }
 });
 
+//데이터 베이스 관련 함수
+async function Insert_DB(table, data) {
+  let conn;
+  try {
+    // 데이터베이스 연결
+    conn = await pool.getConnection();
+
+    const primaryKey = Object.keys(data)[0];
+    const primaryValue = Object.values(data)[0];
+
+    //존재 여부 확인 (0번째 인덱스는 무조건 기본키가 되는 값으로 해야함)
+    const check = await conn.query(`SELECT COUNT(*) AS count FROM ${table} WHERE ${primaryKey} = ?`, [primaryValue]);
+
+    //대화가 변경되지 않아도 write버튼을 눌러 대화를 초기화 하면 date가 업데이트 되며 리스트의 순서가 변한다. 확인하여 업데이트 하도록 해야할듯
+
+    const values =
+      '(' +
+      Object.keys(data)
+        .map(() => '?')
+        .join(', ') +
+      ')';
+    const queryData = Object.values(data);
+    let queryResult = null;
+
+    if (check[0].count > 0) {
+      console.log('존재하는DB');
+      const setValues = Object.keys(data)
+        .map((key) => `${key}=?`)
+        .join(', ');
+
+      //기본키 제외하고 업데이트 하도록
+      const insertQuery = `UPDATE ${table} SET ${setValues} WHERE ${primaryKey} = ${primaryValue}`;
+      queryResult = await conn.query(insertQuery, queryData);
+      // 이미 존재
+    } else {
+      //없음
+
+      const insertQuery = `INSERT INTO ${table} (${Object.keys(data)}) VALUES ${values}`;
+      queryResult = await conn.query(insertQuery, queryData);
+    }
+
+    console.log(queryResult);
+    return queryResult;
+  } catch (err) {
+    console.error('오류 발생:', err);
+  } finally {
+    if (conn) conn.release(); // 반드시 연결을 반환
+  }
+}
+
+//대화 '리스트' 가져오기
+async function GetConvList(user_id) {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const rows = await conn.query(`SELECT  conversation_id, date,subject FROM Conversation WHERE user_id = ${user_id} 
+  ORDER BY date DESC`);
+
+    return rows;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) conn.release(); // 반드시 연결을 반환
+  }
+}
+
+//대화 가져오기
+async function GetConversation(conv_id) {
+  let conn;
+
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query(`SELECT * FROM Conversation WHERE conversation_id = ?`, [conv_id]);
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (conn) conn.release(); // 반드시 연결을 반환
+  }
+}
+
 // 유저 정보 추출
-const getUserInfo = async (accessToken) => {
+async function getUserInfo(accessToken) {
   try {
     const response = await axios.get('https://www.googleapis.com/oauth2/v1/userinfo', {
       headers: {
@@ -279,9 +301,40 @@ const getUserInfo = async (accessToken) => {
     // console.error('Error fetching user info:', error);
     throw error;
   }
-};
+}
 
-//대화 요약 요청
+//대화 요약 API 함수
+async function getSummery(stringConv) {
+
+  console.log(stringConv);
+  const conversations = JSON.parse(stringConv);
+  const text = conversations[conversations.length-1].content;
+  console.log(text);
+
+  let msg = [{ role: 'user', content: `${text} => 이 글이 무엇에 관한 글인지 10자 내외로 요약해줘` }];
+  try {
+    const response = await axios.post(
+      apiUrl,
+      {
+        model: 'gpt-4o-mini',
+        messages: msg,
+        max_tokens: 150, // 응답 길이 제한
+        temperature: 0.7, // 창의성 조절 (0 ~ 1 사이 값)
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error:', error.response ? error.response.data : error.message);
+    return { role: 'assistant', content: error.response ? error.response.data : error.message };
+  }
+}
 
 // 모든 요청에 대해 React의 index.html 반환
 app.get('*', (req, res) => {

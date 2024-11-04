@@ -15,6 +15,7 @@ import { jwtDecode } from 'jwt-decode';
 import { fetch } from 'openai/_shims/index.mjs';
 import { SaveConv, LoadConv_List } from '../Modules';
 import { setJwt, setProfilePicture, setNickname } from '../Redux/User';
+import { setConv,setConvId } from '../Redux/Conversation';
 
 function Top_Bar() {
   const dispatch = useDispatch();
@@ -50,6 +51,10 @@ function Top_Bar() {
     try {
       const result = await SaveConv(); // SaveDB 호출
       console.log(result);
+      //성공 시 조건문안에 넣기
+      dispatch(setConv([]));
+      dispatch(setConvId(null));
+
     } catch (error) {
       console.error('저장 중 오류 발생:', error); // 에러 처리
     } finally {
